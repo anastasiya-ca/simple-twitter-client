@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.sunnydaycorp.simpletwitterapp.TimelineActivity" >
+
+    <item
+        android:id="@+id/action_new_tweet"
+        android:icon="@drawable/ic_new_tweet"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:title="@string/action_new_tweet"/>
+
+</menu>

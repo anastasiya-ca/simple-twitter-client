@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/tweet_details_background"
+    tools:context="com.sunnydaycorp.simpletwitterapp.activities.TweetDetailsActivity" >
+
+    <ImageView
+        android:id="@+id/ivUserProfilePic"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_margin="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/ivUserProfilePic"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/ivUserProfilePic"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvUserScreenName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvUserName"
+        android:layout_toRightOf="@id/ivUserProfilePic"
+        android:textColor="#8899a6"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvTweetText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/ivUserProfilePic"
+        android:layout_below="@id/ivUserProfilePic"
+        android:layout_toRightOf="@id/ivUserProfilePic"
+        android:autoLink="all"
+        android:lineSpacingExtra="5dip"
+        android:linksClickable="true"
+        android:paddingBottom="10dp"
+        android:layout_marginRight="5dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvTimeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvTweetText"
+        android:layout_below="@id/tvTweetText"
+        android:gravity="right"
+        android:paddingBottom="15dp"
+        android:paddingTop="5dp"
+        android:textColor="#ccd6dd"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/ivTweetImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTimeStamp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dip"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/image_content_description"
+        android:src="@drawable/ic_launcher" />
+
+    <ProgressBar
+        android:id="@+id/pbLoadingImage"
+        style="@android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tvLoadingImageErrorMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@color/custom_actionbar_color"
+        android:textStyle="bold" />
+
+</RelativeLayout>

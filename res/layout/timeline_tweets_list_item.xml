@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/timeline_tweet_background" >
+
+    <ImageView
+        android:id="@+id/ivRetweetedIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
+    <TextView
+        android:id="@+id/tvRetweetedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/ivRetweetedIcon"
+        android:layout_margin="10dp"
+        android:layout_toRightOf="@id/ivRetweetedIcon" />
+
+    <ImageView
+        android:id="@+id/ivUserProfilePic"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/ivRetweetedIcon"
+        android:layout_margin="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/ivUserProfilePic"
+        android:layout_toRightOf="@id/ivUserProfilePic"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTimeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/ivUserProfilePic"
+        android:layout_marginRight="10dp"
+        android:gravity="right"
+        android:textColor="#ccd6dd"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvUserScreenName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/tvUserName"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@id/tvTimeStamp"
+        android:layout_toRightOf="@id/tvUserName"
+        android:textColor="#8899a6"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvTweetText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvUserName"
+        android:layout_alignRight="@id/tvTimeStamp"
+        android:layout_below="@id/tvUserName"
+        android:layout_toRightOf="@id/ivUserProfilePic"
+        android:paddingBottom="10dp" />
+
+</RelativeLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Simple Twitter</string>
+    <string name="action_new_tweet">New tweet</string>
+    <string name="login_label">Connect to Twitter</string>
+    <string name="title_activity_timeline">Home Timeline</string>
+    <string name="title_activity_tweet_details">Tweet Details</string>
+    <string name="button_cancel_text">Cancel</string>
+    <string name="button_tweet_text">Tweet</string>
+    <string name="image_content_description">image from tweet</string>
+
+</resources>
