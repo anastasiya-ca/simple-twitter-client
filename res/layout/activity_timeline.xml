@@ -5,27 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <FrameLayout
+        android:id="@+id/flContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/timeline_margin"
-        android:layout_marginRight="@dimen/timeline_margin"
-        android:layout_marginTop="@dimen/timeline_margin"
-        tools:context="com.sunnydaycorp.simpletwitterapp.activities.TimelineActivity" >
+        android:layout_alignParentTop="true" >
 
-        <ListView
-            android:id="@+id/lvTimelineTweets"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null" >
-        </ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </FrameLayout>
 
 </RelativeLayout>

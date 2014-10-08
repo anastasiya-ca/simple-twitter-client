@@ -5,7 +5,7 @@
 
     <stroke
         android:width="0.5dip"
-        android:color="@color/listview_item_border_color" />
+        android:color="@color/custom_border_color" />
 
     <corners
         android:topLeftRadius="10dip"

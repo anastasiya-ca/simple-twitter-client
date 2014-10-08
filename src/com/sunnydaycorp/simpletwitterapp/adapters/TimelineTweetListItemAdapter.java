@@ -1,14 +1,14 @@
 package com.sunnydaycorp.simpletwitterapp.adapters;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.text.format.DateUtils;
+import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sunnydaycorp.simpletwitterapp.R;
+import com.sunnydaycorp.simpletwitterapp.activities.TimelineActivity;
+import com.sunnydaycorp.simpletwitterapp.activities.UserProfileActivity;
+import com.sunnydaycorp.simpletwitterapp.formatters.ElapsedTimeFormatter;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 
 public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
@@ -31,6 +34,9 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 		TextView tvTimeStamp;
 		TextView tvUserScreenName;
 		TextView tvTweetText;
+		ImageView ivReplyIcon;
+		TextView tvRetweetedCount;
+		TextView tvFollowersCount;
 	}
 
 	public TimelineTweetListItemAdapter(Context context, List<Tweet> tweets) {
@@ -42,6 +48,7 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Tweet tweet = getItem(position);
+		long userId = tweet.getUser().getUserId();
 
 		if (convertView == null) {
 			convertView = LayoutInflater.from(getContext()).inflate(R.layout.timeline_tweets_list_item, parent, false);
@@ -55,6 +62,20 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 			viewHolder.tvTimeStamp = (TextView) convertView.findViewById(R.id.tvTimeStamp);
 			viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
 			viewHolder.tvTweetText = (TextView) convertView.findViewById(R.id.tvTweetText);
+			viewHolder.ivReplyIcon = (ImageView) convertView.findViewById(R.id.ivReplyIcon);
+			viewHolder.tvRetweetedCount = (TextView) convertView.findViewById(R.id.tvRetweetedCount);
+			viewHolder.tvFollowersCount = (TextView) convertView.findViewById(R.id.tvFollowersCount);
+
+			viewHolder.ivUserProfilePic.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent i = new Intent(TimelineTweetListItemAdapter.this.getContext(), UserProfileActivity.class);
+					i.putExtra(TimelineActivity.USER_ID_EXTRA_TAG, (Long) v.getTag());
+					TimelineTweetListItemAdapter.this.getContext().startActivity(i);
+
+				}
+			});
 			convertView.setTag(viewHolder);
 		}
 
@@ -62,23 +83,29 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 
 		if (position == 0) {
 			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_first_item);
+		} else if (position == getCount() - 1) {
+			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_last_item);
 		} else {
 			convertView.setBackgroundResource(R.drawable.timeline_tweet_background);
 		}
 
 		viewHolder.ivRetweetedIcon.setVisibility(View.GONE);
 		viewHolder.tvRetweetedText.setVisibility(View.GONE);
+		ImageLoader imageLoader = ImageLoader.getInstance();
 		viewHolder.ivUserProfilePic.setImageResource(0);
 		if (tweet.getUser() != null) {
 			viewHolder.tvUserName.setText(tweet.getUser().getUserName());
 			viewHolder.tvUserScreenName.setText("@" + tweet.getUser().getUserScreenName());
 			// reset image from recycled view
-			ImageLoader imageLoader = ImageLoader.getInstance();
+
 			imageLoader.displayImage(tweet.getUser().getUserProfilePicUrl(), viewHolder.ivUserProfilePic);
 		}
 		viewHolder.tvTweetText.setText(tweet.getText());
-		viewHolder.tvTimeStamp.setText(getTimeString(new Date(tweet.getCreatedAt())));
+		viewHolder.tvTimeStamp.setText(ElapsedTimeFormatter.getElapsedTimeString(new Date(tweet.getCreatedAt())));
+		viewHolder.ivUserProfilePic.setTag(userId);
 
+		viewHolder.tvRetweetedCount.setText(String.valueOf(tweet.getRetweetCount()));
+		viewHolder.tvFollowersCount.setText(String.valueOf(tweet.getFavoritesCount()));
 		return convertView;
 	}
 
@@ -96,54 +123,11 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 
 	}
 
-	public static String getTimeString(Date fromdate) {
-
-		long then;
-		then = fromdate.getTime();
-		Date date = new Date(then);
-
-		StringBuffer dateStr = new StringBuffer();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		Calendar now = Calendar.getInstance();
-
-		int days = daysBetween(calendar.getTime(), now.getTime());
-		int minutes = hoursBetween(calendar.getTime(), now.getTime());
-		int hours = minutes / 60;
-		if (days == 0) {
-			int second = minuteBetween(calendar.getTime(), now.getTime());
-			if (minutes > 60) {
-				if (hours >= 1 && hours <= 24) {
-					dateStr.append(hours).append("h");
-				}
-			} else {
-				if (second <= 10) {
-					dateStr.append("now");
-				} else if (second > 10 && second <= 30) {
-					dateStr.append("few sec");
-				} else if (second > 30 && second <= 60) {
-					dateStr.append(second).append("s");
-				} else if (second >= 60 && minutes <= 60) {
-					dateStr.append(minutes).append("m");
-				}
-			}
-		} else if (hours > 24 && days <= 7) {
-			dateStr.append(days).append("d");
+	public void insertAll(Tweet tweet) {
+		if (tweet != null) {
+			insert(tweet, 0);
 		}
-		return dateStr.toString();
-	}
-
-	public static int minuteBetween(Date d1, Date d2) {
-		return (int) ((d2.getTime() - d1.getTime()) / DateUtils.SECOND_IN_MILLIS);
-	}
-
-	public static int hoursBetween(Date d1, Date d2) {
-		return (int) ((d2.getTime() - d1.getTime()) / DateUtils.MINUTE_IN_MILLIS);
-	}
-
-	public static int daysBetween(Date d1, Date d2) {
-		return (int) ((d2.getTime() - d1.getTime()) / DateUtils.DAY_IN_MILLIS);
+		notifyDataSetChanged();
 	}
 
 }

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="custom_actionbar_color">#4e8975</color>
+    <color name="custom_actionbar_color">#55ACEE</color>
+    <color name="custom_border_color">#ccd6dd</color>
+    <color name="custom_actionbar_light_color">#82CAFA</color>
     <color name="custom_actionbar_text_color">#ffffff</color>
     <color name="listview_item_border_color">#81d8d0</color>
-    <color name="swipe_container_activated_color">#81d8d0</color>
+    <color name="tagline_background_color">#99000000</color>
+    <color name="swipe_container_activated_color">#55ACEE</color>
     <color name="secondary_color">#5ED2A2</color>
     <color name="negative_btn_text_color">#000000</color>
     <color name="positive_btn_text_color">#ffffff</color>

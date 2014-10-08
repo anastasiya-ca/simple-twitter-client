@@ -2,12 +2,17 @@
 <resources>
 
     <string name="app_name">Simple Twitter</string>
-    <string name="action_new_tweet">New tweet</string>
+    <string name="action_new_tweet">New Tweet</string>
+    <string name="action_view_profile">My Profile</string>
     <string name="login_label">Connect to Twitter</string>
-    <string name="title_activity_timeline">Home Timeline</string>
+    <string name="title_activity_timeline"></string>
     <string name="title_activity_tweet_details">Tweet Details</string>
+    <string name="title_activity_user_profile">Profile</string>
     <string name="button_cancel_text">Cancel</string>
     <string name="button_tweet_text">Tweet</string>
     <string name="image_content_description">image from tweet</string>
+    <string name="user_timeline_no_tweets_message">hasn\'t tweeted yet</string>
+    <string name="home_timeline_no_tweets_message">You don\'t have any tweets.\n Follow other people or post your tweets</string>
+    <string name="mentions_timeline_no_tweets_message">You haven\'t been mentioned in \n other user\' tweets yet.</string>
 
 </resources>

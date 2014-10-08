@@ -53,8 +53,16 @@
                 android:value=".activities.LoginActivity" />
         </activity>
         <activity
-            android:name="com.sunnydaycorp.simpletwitterapp.activities.TweetDetailsActivity"
+            android:name=".activities.TweetDetailsActivity"
             android:label="@string/title_activity_tweet_details"
+            android:parentActivityName=".activities.TimelineActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.TimelineActivity" />
+        </activity>
+        <activity
+            android:name=".activities.UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
             android:parentActivityName=".activities.TimelineActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

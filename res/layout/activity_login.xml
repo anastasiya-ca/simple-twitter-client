@@ -9,11 +9,11 @@
     tools:context=".LoginActivity" >
 
     <Button
+        android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="20dp"
-        android:onClick="loginToRest"
         android:layout_centerInParent="true"
         android:text="@string/login_label" />
 

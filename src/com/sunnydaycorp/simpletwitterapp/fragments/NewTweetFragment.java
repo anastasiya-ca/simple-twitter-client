@@ -18,12 +18,11 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
-import com.sunnydaycorp.simpletwitterapp.interfaces.OnNewTweetCreatedListener;
+import com.sunnydaycorp.simpletwitterapp.interfaces.OnNewTweetPostedTCListener;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
+import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 
 public class NewTweetFragment extends DialogFragment {
-
-	private OnNewTweetCreatedListener onNewTweetCreatedListener;
 
 	private Button btnCancelNewTweet;
 	private Button btnTweetNewTweet;
@@ -32,11 +31,20 @@ public class NewTweetFragment extends DialogFragment {
 	private TextView tvNewTweetUserScreenName;
 	private EditText etNewTweetText;
 
+	private TwitterRestClient twitterRestClient;
+	private OnNewTweetPostedTCListener onNewTweetCreatedListener;
+
 	public NewTweetFragment() {
 	}
 
-	public NewTweetFragment(OnNewTweetCreatedListener onNewTweetCreatedListener) {
+	public NewTweetFragment(OnNewTweetPostedTCListener onNewTweetCreatedListener) {
 		this.onNewTweetCreatedListener = onNewTweetCreatedListener;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		twitterRestClient = ((SimpleTwitterApp) getActivity().getApplicationContext()).getRestClient();
 	}
 
 	@Override
@@ -115,9 +123,7 @@ public class NewTweetFragment extends DialogFragment {
 	}
 
 	public void postNewTweet(View view) {
-		if (onNewTweetCreatedListener != null) {
-			onNewTweetCreatedListener.onNewTweetCreated(this.getDialog(), etNewTweetText.getText().toString().trim());
-		}
+		twitterRestClient.postNewTweet(onNewTweetCreatedListener, etNewTweetText.getText().toString().trim());
 		getDialog().dismiss();
 	}
 

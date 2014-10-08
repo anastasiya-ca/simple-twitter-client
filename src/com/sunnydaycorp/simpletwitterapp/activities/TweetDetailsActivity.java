@@ -3,7 +3,6 @@ package com.sunnydaycorp.simpletwitterapp.activities;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sunnydaycorp.simpletwitterapp.R;
+import com.sunnydaycorp.simpletwitterapp.fragments.TweetListFragment;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 
 public class TweetDetailsActivity extends Activity {
@@ -31,11 +31,8 @@ public class TweetDetailsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tweet_details);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(false);
-
 		setupViews();
-		long tweetId = getIntent().getLongExtra(TimelineActivity.TWEET_ID_EXTRA_TAG, 0);
+		long tweetId = getIntent().getLongExtra(TweetListFragment.TWEET_ID_EXTRA_TAG, 0);
 		Tweet tweet = Tweet.byTweetId(tweetId);
 		if (tweet != null) {
 			if (tweet.getUser() != null) {

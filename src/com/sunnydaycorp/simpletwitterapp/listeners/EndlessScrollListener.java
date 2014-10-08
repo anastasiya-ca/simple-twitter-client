@@ -1,11 +1,11 @@
-package com.sunnydaycorp.simpletwitterapp.activities;
+package com.sunnydaycorp.simpletwitterapp.listeners;
 
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 public abstract class EndlessScrollListener implements OnScrollListener {
 
-	private int visibleThreshold = 5;
+	private int visibleThreshold = 10;
 
 	private int previousTotalItemCount = 0;
 	private boolean isLoading = true;
@@ -40,6 +40,10 @@ public abstract class EndlessScrollListener implements OnScrollListener {
 	}
 
 	public abstract void onLoadMore();
+
+	public void setLoadAsFailed() {
+		isLoading = false;
+	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {

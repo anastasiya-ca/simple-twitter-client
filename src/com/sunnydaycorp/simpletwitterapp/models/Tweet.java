@@ -32,6 +32,12 @@ public class Tweet extends Model {
 	private long createdAt;
 	@Column(name = "text")
 	private String text;
+	@Column(name = "favorites_count")
+	private long favoritesCount;
+	@Column(name = "retweet_count")
+	private long retweetCount;
+	@Column(name = "img_url")
+	private String displayImgUrl;
 
 	@Column(name = "user", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
 	private TwitterUser user;
@@ -40,28 +46,41 @@ public class Tweet extends Model {
 		super();
 	}
 
-	public Tweet(long tweetId, TwitterUser user, long createdAt, String text) {
+	public Tweet(long tweetId, TwitterUser user, long createdAt, String text, long favoritesCount, long retweetCount) {
 		super();
 		this.tweetId = tweetId;
 		this.user = user;
 		this.createdAt = createdAt;
 		this.text = text;
+		this.favoritesCount = favoritesCount;
+		this.retweetCount = retweetCount;
 	}
 
 	public static Tweet fromJSON(JSONObject tweetJSON) throws JSONException {
-		Tweet tweet = new Tweet();
-		tweet.setTweetId(tweetJSON.optLong("id"));
-		tweet.setUser(TwitterUser.fromJSON(tweetJSON.getJSONObject("user")));
-		tweet.setCreatedAt(tweetJSON.optString("created_at"));
-		tweet.setText(tweetJSON.optString("text"));
+		Tweet tweet = null;
+		if (tweetJSON != null) {
+			tweet = new Tweet();
+			tweet.setTweetId(tweetJSON.optLong("id"));
+			tweet.setUser(TwitterUser.fromJSON(tweetJSON.getJSONObject("user")));
+			tweet.setCreatedAt(tweetJSON.optString("created_at"));
+			tweet.setText(tweetJSON.optString("text"));
+			tweet.setFavoritesCount(tweetJSON.optLong("favorite_count"));
+			tweet.setRetweetCount(tweetJSON.optLong("retweet_count"));
+
+		}
 		return tweet;
 	}
 
 	public static List<Tweet> fromJSONArray(JSONArray jsonTweetArray) throws JSONException {
-		ArrayList<Tweet> tweets = new ArrayList<Tweet>(jsonTweetArray.length());
-		for (int i = 0; i < jsonTweetArray.length(); i++) {
-			JSONObject tweetJSON = jsonTweetArray.getJSONObject(i);
-			tweets.add(fromJSON(tweetJSON));
+		ArrayList<Tweet> tweets = null;
+		if (jsonTweetArray != null) {
+			tweets = new ArrayList<Tweet>(jsonTweetArray.length());
+			for (int i = 0; i < jsonTweetArray.length(); i++) {
+				JSONObject tweetJSON = jsonTweetArray.getJSONObject(i);
+				tweets.add(fromJSON(tweetJSON));
+			}
+		} else {
+			tweets = new ArrayList<Tweet>();
 		}
 		return tweets;
 	}
@@ -70,8 +89,17 @@ public class Tweet extends Model {
 		return new Select().from(Tweet.class).where("remote_id = ?", id).executeSingle();
 	}
 
-	public static List<Tweet> recentItems() {
-		return new Select().from(Tweet.class).orderBy("remote_id DESC").limit("20").execute();
+	public static List<Tweet> recentHomeTweets() {
+		return new Select().from(Tweet.class).orderBy("remote_id DESC").limit("25").execute();
+	}
+
+	public static List<Tweet> recentUserTweets(long remoteUserId) {
+		TwitterUser user = TwitterUser.byRemoteId(remoteUserId);
+		if (user != null) {
+			return new Select().from(Tweet.class).where("user = ?", user.getId()).orderBy("remote_id DESC").limit("25").execute();
+		} else {
+			return new ArrayList<Tweet>();
+		}
 	}
 
 	public static int recordCount() {
@@ -125,4 +153,29 @@ public class Tweet extends Model {
 	public void setUser(TwitterUser user) {
 		this.user = user;
 	}
+
+	public long getFavoritesCount() {
+		return favoritesCount;
+	}
+
+	public void setFavoritesCount(long favoritesCount) {
+		this.favoritesCount = favoritesCount;
+	}
+
+	public long getRetweetCount() {
+		return retweetCount;
+	}
+
+	public void setRetweetCount(long retweetCount) {
+		this.retweetCount = retweetCount;
+	}
+
+	public String getDisplayImgUrl() {
+		return displayImgUrl;
+	}
+
+	public void setDisplayImgUrl(String displayImgUrl) {
+		this.displayImgUrl = displayImgUrl;
+	}
+
 }

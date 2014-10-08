@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -13,50 +13,62 @@
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:typeface">serif</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionBarTabStyle">@style/MyActionBarTab</item>
+        <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
         <item name="android:buttonStyle">@style/MyButton</item>
         <item name="android:imageButtonStyle">@style/MyImageButton</item>
-    </style>
-
-    <style name="MyActionBar" parent="@android:Widget.Holo.ActionBar">
-        <item name="android:background">@color/custom_actionbar_color</item>
-        <item name="android:titleTextStyle">@style/MyTitleText</item>
+        <item name="android:windowBackground">@color/positive_btn_text_color</item>
         <item name="android:indeterminateProgressStyle">@style/MyIndeterminateProgressStyle</item>
     </style>
 
-    <style name="MyTitleText" parent="@android:TextAppearance.Holo.Widget.ActionBar.Title">
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/custom_actionbar_color</item>
+        <item name="android:titleTextStyle">@style/MyTitleText</item>
+    </style>
+
+    <style name="MyActionBarTab" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_simpletwitter</item>
+    </style>
+
+    <style name="MyActionBarTabText" parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+        <item name="android:textColor">@color/custom_actionbar_color</item>
+    </style>
+
+    <style name="MyTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/custom_actionbar_text_color</item>
+    </style>
+    
+    <style name="MyIndeterminateProgressStyle" parent="@android:style/Widget.ProgressBar.Small">
+    </style>
+
+
+    <style name="MyButton" parent="@style/Widget.AppCompat.Light.ActionButton">
+        <item name="android:background">@drawable/buttonpositive</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">64dp</item>
         <item name="android:textColor">@color/custom_actionbar_text_color</item>
     </style>
 
-    <style name="MyIndeterminateProgressStyle" parent="@android:style/Widget.ProgressBar.Small">
-    </style>
-    
-    <style name="MyButton" parent="@android:Widget.Holo.Button">
-        <item name="android:background">@drawable/buttonpositive</item>
-        <item name="android:minHeight">48dip</item>
-        <item name="android:minWidth">64dip</item>
-        <item name="android:textColor">@color/custom_actionbar_text_color</item>
-    </style>
-    
-    <style name="MyPositiveButton" parent="@android:Widget.Holo.Button">
+    <style name="MyPositiveButton" parent="@style/Widget.AppCompat.Light.ActionButton">
         <item name="android:background">@drawable/btn_positive</item>
-        <item name="android:minHeight">24dip</item>
-        <item name="android:minWidth">32dip</item>
+        <item name="android:minHeight">24dp</item>
+        <item name="android:minWidth">32dp</item>
         <item name="android:textColor">@color/custom_actionbar_text_color</item>
     </style>
-    
-    <style name="MyNegativeButton" parent="@android:Widget.Holo.Button">
+
+    <style name="MyNegativeButton" parent="@style/Widget.AppCompat.Light.ActionButton">
         <item name="android:background">@drawable/button</item>
-        <item name="android:minHeight">24dip</item>
-        <item name="android:minWidth">32dip</item>
+        <item name="android:minHeight">24dp</item>
+        <item name="android:minWidth">32dp</item>
         <item name="android:textColor">@color/negative_btn_text_color</item>
     </style>
 
-    <style name="MyImageButton" parent="@android:Widget.ImageButton">
+    <style name="MyImageButton" parent="@style/Widget.AppCompat.Light.ActionButton">
         <item name="android:background">@drawable/simpletwitter_btn_default_holo_light</item>
         <item name="android:textColor">@color/custom_actionbar_text_color</item>
     </style>

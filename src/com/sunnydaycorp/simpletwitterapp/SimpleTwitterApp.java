@@ -24,9 +24,6 @@ public class SimpleTwitterApp extends com.activeandroid.app.Application {
 	public void onCreate() {
 		super.onCreate();
 		SimpleTwitterApp.context = this;
-
-		// Create global configuration and initialize ImageLoader with this
-		// configuration
 		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc().build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).defaultDisplayImageOptions(defaultOptions)
 				.build();
