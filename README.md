@@ -2,15 +2,16 @@ Simple Twitter Client - android app
 ================
 Simple Twitter Client is a basic android app that allows a user to own Twitter timeline, as well as compose and post a new tweet. The app utilizes [Twitter REST API] (https://dev.twitter.com/rest/public). 
 The following **required** functionality is completed:
-* [x]	User can **sign in to Twitter** using pOAuth login. Existing Twitter account credentials are required.
+* [x]	User can **sign in to Twitter** using OAuth login. Existing Twitter account credentials are required.
 * [x]	User can **view tweets from their home timeline**. Each tweet has username, screen name, profile picture, body and relative timestamp displayed.
 * [x]	User can **scroll down to see more older tweets**. Number of tweets is unlimited. However there are [Twiiter Api Rate Limits] (https://dev.twitter.com/rest/public/rate-limiting) in place.
 * [x]	User can **compose and post a new tweet**. Compose icon is in the right corner of action bar. Posting empty tweet is not allowed. Once button “Tweet” is clicked the tweet is posted to twitter and is inserted to the top of the timeline stream. Please note that this implementation can result in losing some tweets (tweets that were created between the last post on your timeline and new tweet posted by you).
+
 The following **optional** features are implemented:
 * [x]	User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While “live data” is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
-* [x]	User can **pull down to refresh tweets timeline **
+* [x]	User can **pull down to refresh tweets timeline**
 * [x]	Compose tweet functionality is build using modal overlay.
-* [x]	User can **see a counter with total number of characters left for tweet ** on compose tweet page.
+* [x]	User can **see a counter with total number of characters left for tweet** on compose tweet page.
 * [x]	User can **open a detailed tweet view**
 * [x]	User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [x]	Improved **error handing with relevant messaging** and logging on internet not available and error response from API.
