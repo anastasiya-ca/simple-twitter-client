@@ -47,4 +47,5 @@ Points to consider for future development:
 -	User can view their direct messages (or send new ones)
 -	User can view following / followers list through the profile
 -	Refactor persistence-related code
+-	Improve swipe profile header (without counts)
 
