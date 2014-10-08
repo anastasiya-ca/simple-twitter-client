@@ -12,10 +12,10 @@ The following **required** functionality is completed:
 * [x]	User can **view another user profile** by clicking on image within a tweet. Profile includes picture, banner, tagline, # of followers, # of following, and tweets on user’s profile (user timeline). User timeline can be refreshed or older tweets loaded.
 
 The following **optional** features are implemented:
-* [x]	User can **open the twitter app offline and see last loaded tweets ( home and user timelines) as well as user profiles **. Persisted in SQLite tweets are refreshed on every application launch. While “live data” is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
-* [x]	User can **pull down to refresh tweets timeline **
+* [x]	User can **open the twitter app offline and see last loaded tweets ( home and user timelines) as well as user profiles**. Persisted in SQLite tweets are refreshed on every application launch. While “live data” is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
+* [x]	User can **pull down to refresh tweets timelines**
 * [x]	Compose tweet functionality is build using modal overlay.
-* [x]	User can **see a counter with total number of characters left for tweet ** on compose tweet page.
+* [x]	User can **see a counter with total number of characters left for tweet** on compose tweet page.
 * [x]	User can **open a detailed tweet view**
 * [x]	User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [x]	Improved **error handing with relevant messaging** and logging on internet not available and error response from API.
