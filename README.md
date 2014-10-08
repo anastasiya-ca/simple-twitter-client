@@ -21,6 +21,7 @@ The following **optional** features are implemented:
 * [x]	Improved **error handing with relevant messaging** and logging on internet not available and error response from API.
 * [x]	Improved **look and fill and user experience** (opening/hiding soft keyboard, loading spinner, focus, empty new tweet validation etc)
 * [x]	**Tabs are implemented in a gingerbread-compatible approach**.
+* [x]	**User can swipe profile header to see tagline**.
 
 The app was tested on HTC One (Android 4.1.2) and on AVDs.
 
