@@ -8,15 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sunnydaycorp.simpletwitterapp.R;
-import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
 import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
-import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.TwitterAPIReqCode;
 
 public class HomeTimelineFragment extends TweetListFragment {
-
-	private TwitterRestClient twitterRestClient;
 
 	public HomeTimelineFragment() {
 	}
@@ -24,7 +20,7 @@ public class HomeTimelineFragment extends TweetListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		twitterRestClient = ((SimpleTwitterApp) getActivity().getApplication()).getRestClient();
+		reloadRecentTweets();
 	}
 
 	@Override
@@ -59,8 +55,8 @@ public class HomeTimelineFragment extends TweetListFragment {
 	}
 
 	@Override
-	public boolean isClearDataRequiredOnNewLoad() {
-		return true;
+	public void updateUserCountsTimelineRefreshed() {
+		// not required
 	}
 
 }

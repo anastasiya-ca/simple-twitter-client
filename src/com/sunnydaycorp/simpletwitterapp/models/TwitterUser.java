@@ -148,14 +148,6 @@ public class TwitterUser extends Model {
 		this.userProfilePicUrl = userProfilePicUrl;
 	}
 
-	public long getTwitterUserId() {
-		return twitterUserId;
-	}
-
-	public void setTwitterUserId(long twitterUserId) {
-		this.twitterUserId = twitterUserId;
-	}
-
 	public String getUserProfileBackgroundPicUrl() {
 		return userProfileBackgroundPicUrl;
 	}

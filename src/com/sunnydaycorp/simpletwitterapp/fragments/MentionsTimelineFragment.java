@@ -8,15 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sunnydaycorp.simpletwitterapp.R;
-import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
 import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
-import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.TwitterAPIReqCode;
 
 public class MentionsTimelineFragment extends TweetListFragment {
-
-	private TwitterRestClient twitterRestClient;
 
 	public MentionsTimelineFragment() {
 	}
@@ -24,7 +20,7 @@ public class MentionsTimelineFragment extends TweetListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		twitterRestClient = ((SimpleTwitterApp) getActivity().getApplication()).getRestClient();
+		reloadRecentTweets();
 	}
 
 	@Override
@@ -54,14 +50,13 @@ public class MentionsTimelineFragment extends TweetListFragment {
 
 	@Override
 	public List<Tweet> getCachedRecentTweets() {
-		// TODO implement populating menthions tweets
-		return null;
+		return Tweet.recentMentionsTweets();
 	}
 
 	@Override
-	public boolean isClearDataRequiredOnNewLoad() {
-		// revise if introduce separate clean for mentions and home tweets
-		return false;
+	public void updateUserCountsTimelineRefreshed() {
+		// not required
+
 	}
 
 }

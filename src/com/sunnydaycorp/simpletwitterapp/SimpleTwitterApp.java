@@ -13,22 +13,17 @@ import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 public class SimpleTwitterApp extends com.activeandroid.app.Application {
 
 	private static Context context;
-
-	private SharedLoggedUserDetails sharedLoggedUserDetails;
-
-	public SharedLoggedUserDetails getSharedLoggedUserDetails() {
-		return sharedLoggedUserDetails;
-	}
+	private static SharedLoggedUserDetails sharedLoggedUserDetails;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		SimpleTwitterApp.context = this;
 		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc().build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).defaultDisplayImageOptions(defaultOptions)
 				.build();
 		ImageLoader.getInstance().init(config);
-
 		sharedLoggedUserDetails = new SharedLoggedUserDetails(this);
 	}
 
@@ -40,5 +35,9 @@ public class SimpleTwitterApp extends com.activeandroid.app.Application {
 
 	public TwitterRestClient getRestClient() {
 		return (TwitterRestClient) TwitterRestClient.getInstance(TwitterRestClient.class, SimpleTwitterApp.context);
+	}
+
+	public SharedLoggedUserDetails getSharedLoggedUserDetails() {
+		return sharedLoggedUserDetails;
 	}
 }

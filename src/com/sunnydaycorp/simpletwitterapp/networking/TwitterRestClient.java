@@ -1,5 +1,6 @@
 package com.sunnydaycorp.simpletwitterapp.networking;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +11,16 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
-import com.sunnydaycorp.simpletwitterapp.interfaces.OnNewTweetPostedTCListener;
+import com.sunnydaycorp.simpletwitterapp.interfaces.LoggedUserInfoResponseListener;
 import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
-import com.sunnydaycorp.simpletwitterapp.interfaces.TwitterClientListener;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
@@ -35,6 +37,7 @@ public class TwitterRestClient extends OAuthBaseClient {
 	public static final String USER_TIMELINE_PATH = "statuses/user_timeline.json";
 	public static final String POST_NEW_TWEET_PATH = "statuses/update.json";
 	public static final String VERIFY_CREDENTIALS_PATH = "account/verify_credentials.json";
+	public static final String SEARCH_TWEETS_PATH = "search/tweets.json";
 
 	public static final String LOG_TAG_CLASS = TwitterRestClient.class.getSimpleName();
 	public static final String REQUEST_PARAM_USER_ID = "user_id";
@@ -42,8 +45,8 @@ public class TwitterRestClient extends OAuthBaseClient {
 	public static final String REQUEST_PARAM_MAX_ID = "max_id";
 	public static final String REQUEST_PARAM_STATUS = "status";
 
-	public enum ResultCode {
-		JSON_PARSING_EXCEPTION, FAILED_REQUEST, NO_INTERNET, EXCEEDED_QPS
+	public enum ResultCode implements Serializable {
+		OK, JSON_PARSING_EXCEPTION, FAILED_REQUEST, NO_INTERNET, EXCEEDED_QPS
 	};
 
 	public enum TwitterAPIReqCode {
@@ -132,48 +135,48 @@ public class TwitterRestClient extends OAuthBaseClient {
 	}
 
 	private void fetchTimelineTweets(String apiPath, final TwitterAPIReqCode requestCode, final TimelineResponseListener listener, long sinceId,
-			long maxId, Long userId) {
+			long maxId, Long userId, final boolean isMentionsTimeline) {
 		RequestParams params = getTimelineRequestParams(requestCode, sinceId, maxId, userId);
 		makeRequest(apiPath, params, new TwitterRequestListener() {
 			@Override
 			public void onSuccess(JSONObject response) {
 				Log.i(LOG_TAG_CLASS, "Received unexpected JSONObject success response from Twitter API: " + response.toString());
-				listener.onError(ResultCode.FAILED_REQUEST);
+				listener.onErrorResult(ResultCode.FAILED_REQUEST);
 			}
 
 			@Override
 			public void onSuccess(JSONArray response) {
 				List<Tweet> tweets = new ArrayList<Tweet>();
 				try {
-					tweets = Tweet.fromJSONArray(response);
+					tweets = Tweet.fromJSONArray(response, isMentionsTimeline);
 					listener.onTimelineFetched(requestCode, tweets);
 				} catch (JSONException e) {
 					Log.e(LOG_TAG_CLASS, "Error processing JSON response from Twitter", e);
-					listener.onError(ResultCode.JSON_PARSING_EXCEPTION);
+					listener.onErrorResult(ResultCode.JSON_PARSING_EXCEPTION);
 				}
 			}
 
 			@Override
 			public void onError(ResultCode resultCode) {
-				listener.onError(resultCode);
+				listener.onErrorResult(resultCode);
 			}
 		});
 	}
 
 	public void fetchHomeTimelineTweets(TwitterAPIReqCode requestCode, TimelineResponseListener listener, long sinceId, long maxId) {
-		fetchTimelineTweets(HOME_TIMELINE_PATH, requestCode, listener, sinceId, maxId, null);
+		fetchTimelineTweets(HOME_TIMELINE_PATH, requestCode, listener, sinceId, maxId, null, false);
 	}
 
 	public void fetchMentionsTimelineTweets(TwitterAPIReqCode requestCode, TimelineResponseListener listener, long sinceId, long maxId) {
-		fetchTimelineTweets(MENTIONS_TIMELINE_PATH, requestCode, listener, sinceId, maxId, null);
+		fetchTimelineTweets(MENTIONS_TIMELINE_PATH, requestCode, listener, sinceId, maxId, null, true);
 	}
 
 	public void fetchUserTimelineTweets(TwitterAPIReqCode requestCode, TimelineResponseListener listener, long sinceId, long maxId, long userId) {
-		fetchTimelineTweets(USER_TIMELINE_PATH, requestCode, listener, sinceId, maxId, userId);
+		fetchTimelineTweets(USER_TIMELINE_PATH, requestCode, listener, sinceId, maxId, userId, false);
 	}
 
-	public void postNewTweet(final OnNewTweetPostedTCListener listener, String text) {
-		// TODO check for inet connection
+	public void postNewTweet(String text) {
+		// TODO check for Internet connection
 		String apiUrl = getApiUrl(POST_NEW_TWEET_PATH);
 		RequestParams params = new RequestParams();
 
@@ -185,50 +188,33 @@ public class TwitterRestClient extends OAuthBaseClient {
 				@Override
 				public void onSuccess(int statusCode, JSONArray response) {
 					Log.e(LOG_TAG_CLASS, "Received unexpected success response from Twitter API: " + response.toString());
-					listener.onError(ResultCode.FAILED_REQUEST);
+					sendNewTweetPostBroadcast(ResultCode.FAILED_REQUEST);
 				}
 
 				@Override
 				public void onSuccess(int statusCode, JSONObject response) {
 					Log.i(LOG_TAG_CLASS, "Received JSONObject success response from Twitter API: " + response.toString());
 					try {
-						Tweet tweet = Tweet.fromJSON(response);
+						Tweet tweet = Tweet.fromJSON(response, false);
 						if (tweet != null) {
-							refreshDataCached(tweet);
-						}
-						if (listener != null) {
-							listener.onNewTweetPosted(tweet);
+							sendNewTweetPostBroadcast(ResultCode.OK);
 						}
 					} catch (JSONException e) {
 						Log.e(LOG_TAG_CLASS, "Error processing JSON response from Twitter", e);
-						listener.onError(ResultCode.JSON_PARSING_EXCEPTION);
+						sendNewTweetPostBroadcast(ResultCode.JSON_PARSING_EXCEPTION);
 					}
 				}
 
 				@Override
 				public void onFailure(Throwable throwable, JSONObject errorResponse) {
 					Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
-					listener.onError(ResultCode.FAILED_REQUEST);
+					sendNewTweetPostBroadcast(ResultCode.FAILED_REQUEST);
 				}
 
 				@Override
 				public void onFailure(Throwable throwable, JSONArray errorResponse) {
 					Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
-					listener.onError(ResultCode.FAILED_REQUEST);
-				}
-
-				private void refreshDataCached(Tweet tweet) {
-					// save new tweet data to DB
-					tweet.getUser().save();
-					TwitterUser user = TwitterUser.byRemoteId(tweet.getUser().getUserId());
-					Log.d("DEBUG", "User has been saved with " + user.getUserId() + " and DB id " + user.getId());
-					tweet.setUser(user);
-					tweet.save();
-					Log.d("DEBUG", "Tweet has been saved with " + tweet.getTweetId() + " and DB id " + tweet.getId() + " and user id "
-							+ tweet.getUser().getId());
-					Log.d("DEBUG", "On save there are " + TwitterUser.recordCount() + " users in DB");
-					Log.d("DEBUG", "On save there are " + Tweet.recordCount() + " tweets in DB");
-
+					sendNewTweetPostBroadcast(ResultCode.FAILED_REQUEST);
 				}
 
 			});
@@ -236,7 +222,13 @@ public class TwitterRestClient extends OAuthBaseClient {
 
 	}
 
-	public void verifyAndGetUserCredentials(final TwitterClientListener listener) {
+	private void sendNewTweetPostBroadcast(ResultCode resultCode) {
+		Intent intent = new Intent("new-tweet-posted");
+		intent.putExtra("RESULT_CODE", resultCode);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+	}
+
+	public void verifyAndGetUserCredentials(final LoggedUserInfoResponseListener listener) {
 		String apiUrl = getApiUrl(VERIFY_CREDENTIALS_PATH);
 		RequestParams params = null;
 
@@ -244,7 +236,7 @@ public class TwitterRestClient extends OAuthBaseClient {
 			@Override
 			public void onSuccess(int statusCode, JSONArray response) {
 				Log.e(LOG_TAG_CLASS, "Received unexpected JSONArray success response from Twitter API: " + response.toString());
-				listener.onError(ResultCode.FAILED_REQUEST);
+				listener.onErrorResult(ResultCode.FAILED_REQUEST);
 			}
 
 			@Override
@@ -256,22 +248,23 @@ public class TwitterRestClient extends OAuthBaseClient {
 					loggedUserDetails.savePreferences(user.getUserId(), user.getUserName(), user.getUserScreenName(), user.getUserProfilePicUrl(),
 							user.getUserProfileBackgroundPicUrl(), user.getTweetsCount(), user.getFollowersCount(), user.getFollowingCount(),
 							user.getUserTagline());
+					listener.onSuccess();
 				} catch (JSONException e) {
 					Log.e(LOG_TAG_CLASS, "Error processing User Credentials JSON response from Twitter", e);
-					listener.onError(ResultCode.JSON_PARSING_EXCEPTION);
+					listener.onErrorResult(ResultCode.JSON_PARSING_EXCEPTION);
 				}
 			}
 
 			@Override
 			public void onFailure(Throwable throwable, JSONObject errorResponse) {
 				Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
-				listener.onError(ResultCode.FAILED_REQUEST);
+				listener.onErrorResult(ResultCode.FAILED_REQUEST);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable, JSONArray errorResponse) {
 				Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
-				listener.onError(ResultCode.FAILED_REQUEST);
+				listener.onErrorResult(ResultCode.FAILED_REQUEST);
 			}
 
 		});

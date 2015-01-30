@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.activities.TimelineActivity;
 import com.sunnydaycorp.simpletwitterapp.activities.UserProfileActivity;
 import com.sunnydaycorp.simpletwitterapp.formatters.ElapsedTimeFormatter;
+import com.sunnydaycorp.simpletwitterapp.fragments.NewTweetFragment;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 
 public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
@@ -72,8 +75,18 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 				public void onClick(View v) {
 					Intent i = new Intent(TimelineTweetListItemAdapter.this.getContext(), UserProfileActivity.class);
 					i.putExtra(TimelineActivity.USER_ID_EXTRA_TAG, (Long) v.getTag());
+					i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					TimelineTweetListItemAdapter.this.getContext().startActivity(i);
 
+				}
+			});
+
+			viewHolder.ivReplyIcon.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					DialogFragment newFragment = NewTweetFragment.newInstance((String) v.getTag());
+					newFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "onNewTweetDialog");
 				}
 			});
 			convertView.setTag(viewHolder);
@@ -81,10 +94,12 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 
 		ViewHolder viewHolder = (ViewHolder) convertView.getTag();
 
-		if (position == 0) {
-			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_first_item);
+		if (position == 0 && getCount() == 1) {
+			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_single_item);
 		} else if (position == getCount() - 1) {
 			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_last_item);
+		} else if (position == 0) {
+			convertView.setBackgroundResource(R.drawable.timeline_tweet_background_first_item);
 		} else {
 			convertView.setBackgroundResource(R.drawable.timeline_tweet_background);
 		}
@@ -103,6 +118,8 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 		viewHolder.tvTweetText.setText(tweet.getText());
 		viewHolder.tvTimeStamp.setText(ElapsedTimeFormatter.getElapsedTimeString(new Date(tweet.getCreatedAt())));
 		viewHolder.ivUserProfilePic.setTag(userId);
+
+		viewHolder.ivReplyIcon.setTag("@" + tweet.getUser().getUserScreenName());
 
 		viewHolder.tvRetweetedCount.setText(String.valueOf(tweet.getRetweetCount()));
 		viewHolder.tvFollowersCount.setText(String.valueOf(tweet.getFavoritesCount()));

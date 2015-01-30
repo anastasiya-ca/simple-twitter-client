@@ -7,6 +7,7 @@
     <color name="custom_actionbar_text_color">#ffffff</color>
     <color name="listview_item_border_color">#81d8d0</color>
     <color name="tagline_background_color">#99000000</color>
+    <color name="profile_background_color">#25000000</color>
     <color name="swipe_container_activated_color">#55ACEE</color>
     <color name="secondary_color">#5ED2A2</color>
     <color name="negative_btn_text_color">#000000</color>

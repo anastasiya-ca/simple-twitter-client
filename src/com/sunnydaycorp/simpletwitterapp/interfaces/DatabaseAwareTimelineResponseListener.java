@@ -1,59 +1,54 @@
 package com.sunnydaycorp.simpletwitterapp.interfaces;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
-import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 
-public abstract class DatabaseAwareTimelineResponseListener implements TimelineResponseListener {
-
-	private Context context;
+public abstract class DatabaseAwareTimelineResponseListener extends TimelineResponseListener {
 
 	public DatabaseAwareTimelineResponseListener(Context context) {
-		this.context = context;
-	}
-
-	protected void clearData() {
-		TwitterUser.deleteAll();
-		Tweet.deleteAll();
+		super(context);
 	}
 
 	protected void saveTweets(List<Tweet> tweets) {
+		HashMap<Long, TwitterUser> twitterUserMap = new HashMap<Long, TwitterUser>();
 		for (Tweet tweet : tweets) {
-			tweet.getUser().save();
-			TwitterUser user = TwitterUser.byRemoteId(tweet.getUser().getUserId());
-			Log.d("DEBUG", "User has been saved with " + user.getUserId() + " and DB id " + user.getId());
+			TwitterUser user = twitterUserMap.get(tweet.getUser().getUserId());
+			if (user == null) {
+				user = TwitterUser.byRemoteId(tweet.getUser().getUserId());
+			}
+			if (user == null) {
+				// save new user
+				tweet.getUser().save();
+				user = tweet.getUser();
+			} else {
+				// update existing user
+				user.setFollowersCount(tweet.getUser().getFollowersCount());
+				user.setFollowingCount(tweet.getUser().getFollowingCount());
+				user.setTweetsCount(tweet.getUser().getTweetsCount());
+				user.setUserName(tweet.getUser().getUserName());
+				user.setUserProfileBackgroundPicUrl(tweet.getUser().getUserProfileBackgroundPicUrl());
+				user.setUserProfilePicUrl(tweet.getUser().getUserProfilePicUrl());
+				user.setUserScreenName(tweet.getUser().getUserScreenName());
+				user.setUserTagline(tweet.getUser().getUserTagline());
+				user.save();
+			}
+			twitterUserMap.put(tweet.getUser().getUserId(), user);
 			tweet.setUser(user);
 			tweet.save();
-			Log.d("DEBUG", "Tweet has been saved with " + tweet.getTweetId() + " and DB id " + tweet.getId() + " and user id "
-					+ tweet.getUser().getId());
+			Log.d("DEBUG",
+					"Misha saving tweet User:" + tweet.getUser().getUserName() + " tweet:" + tweet.getTweetId() + " Mention:"
+							+ tweet.isMentionsTweet());
+
+			Log.d("DEBUG", "Misha " + TwitterUser.recordCount() + " users in DB");
+			Log.d("DEBUG", "Misha " + Tweet.recordCount() + " tweets in DB");
 		}
 		Log.d("DEBUG", "On save there are " + TwitterUser.recordCount() + " users in DB");
 		Log.d("DEBUG", "On save there are " + Tweet.recordCount() + " tweets in DB");
 	}
-
-	@Override
-	public void onError(TwitterRestClient.ResultCode resultCode) {
-		switch (resultCode) {
-		case FAILED_REQUEST:
-			Toast.makeText(context, "Error connecting Twitter. Please try again", Toast.LENGTH_SHORT).show();
-			break;
-		case JSON_PARSING_EXCEPTION:
-			Toast.makeText(context, "Error in processing response from Twitter", Toast.LENGTH_SHORT).show();
-			break;
-		case NO_INTERNET:
-			Toast.makeText(context, "You are in offline mode. Please check your internet connection", Toast.LENGTH_SHORT).show();
-			break;
-		case EXCEEDED_QPS:
-			Toast.makeText(context, "Too many requests. Please wait and try again later", Toast.LENGTH_SHORT).show();
-			break;
-		}
-
-	}
-
 }

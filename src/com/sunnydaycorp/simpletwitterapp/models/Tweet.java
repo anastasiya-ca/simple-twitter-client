@@ -39,6 +39,9 @@ public class Tweet extends Model {
 	@Column(name = "img_url")
 	private String displayImgUrl;
 
+	@Column(name = "is_mentions_tweet")
+	private boolean isMentionsTweet;
+
 	@Column(name = "user", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
 	private TwitterUser user;
 
@@ -56,7 +59,7 @@ public class Tweet extends Model {
 		this.retweetCount = retweetCount;
 	}
 
-	public static Tweet fromJSON(JSONObject tweetJSON) throws JSONException {
+	public static Tweet fromJSON(JSONObject tweetJSON, boolean isMentionsTweet) throws JSONException {
 		Tweet tweet = null;
 		if (tweetJSON != null) {
 			tweet = new Tweet();
@@ -66,18 +69,18 @@ public class Tweet extends Model {
 			tweet.setText(tweetJSON.optString("text"));
 			tweet.setFavoritesCount(tweetJSON.optLong("favorite_count"));
 			tweet.setRetweetCount(tweetJSON.optLong("retweet_count"));
-
+			tweet.setMentionsTweet(isMentionsTweet);
 		}
 		return tweet;
 	}
 
-	public static List<Tweet> fromJSONArray(JSONArray jsonTweetArray) throws JSONException {
+	public static List<Tweet> fromJSONArray(JSONArray jsonTweetArray, boolean isMentionsTweet) throws JSONException {
 		ArrayList<Tweet> tweets = null;
 		if (jsonTweetArray != null) {
 			tweets = new ArrayList<Tweet>(jsonTweetArray.length());
 			for (int i = 0; i < jsonTweetArray.length(); i++) {
 				JSONObject tweetJSON = jsonTweetArray.getJSONObject(i);
-				tweets.add(fromJSON(tweetJSON));
+				tweets.add(fromJSON(tweetJSON, isMentionsTweet));
 			}
 		} else {
 			tweets = new ArrayList<Tweet>();
@@ -100,6 +103,10 @@ public class Tweet extends Model {
 		} else {
 			return new ArrayList<Tweet>();
 		}
+	}
+
+	public static List<Tweet> recentMentionsTweets() {
+		return new Select().from(Tweet.class).where("is_mentions_tweet = ?", true).orderBy("remote_id DESC").limit("25").execute();
 	}
 
 	public static int recordCount() {
@@ -176,6 +183,14 @@ public class Tweet extends Model {
 
 	public void setDisplayImgUrl(String displayImgUrl) {
 		this.displayImgUrl = displayImgUrl;
+	}
+
+	public boolean isMentionsTweet() {
+		return isMentionsTweet;
+	}
+
+	public void setMentionsTweet(boolean isMentionsTweet) {
+		this.isMentionsTweet = isMentionsTweet;
 	}
 
 }

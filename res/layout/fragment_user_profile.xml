@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/profile_background_color"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -42,112 +43,5 @@
         android:layout_centerHorizontal="true"
         android:textColor="#ffffff"
         android:textSize="15sp" />
-
-    <LinearLayout
-        android:id="@+id/llCounts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ivUserProfileBackground"
-        android:orientation="horizontal" >
-
-        <LinearLayout
-            android:id="@+id/llTweetCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/tweet_counts_background"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tvTweetCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="3dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:text="0"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvTweetCountLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:text="TWEETS"
-                android:textColor="#8899a6"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llFollowingCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/tweet_counts_background"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tvFollowingCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="3dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:text="0"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvFollowingCountLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:text="FOLLOWING"
-                android:textColor="#8899a6"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llFollowersCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/tweet_counts_background"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tvFollowersCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="3dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:text="0"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvFollowersCountLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:text="FOLLOWERS"
-                android:textColor="#8899a6"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
 
 </RelativeLayout>

@@ -13,7 +13,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
 import com.sunnydaycorp.simpletwitterapp.activities.UserProfileActivity;
-import com.sunnydaycorp.simpletwitterapp.formatters.TwitterCountsFormatter;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
 
@@ -23,11 +22,8 @@ public class UserTaglineFragment extends Fragment {
 
 	private ImageView ivUserProfileBackground;
 	private TextView tvTagline;
-	private TextView tvTweetCount;
-	private TextView tvFollowingCount;
-	private TextView tvFollowersCount;
 
-	private long userId = 0;
+	private long userId;
 
 	public UserTaglineFragment() {
 	}
@@ -52,10 +48,6 @@ public class UserTaglineFragment extends Fragment {
 
 		ivUserProfileBackground = (ImageView) view.findViewById(R.id.ivUserProfileBackground);
 		tvTagline = (TextView) view.findViewById(R.id.tvTagline);
-		tvTweetCount = (TextView) view.findViewById(R.id.tvTweetCount);
-		tvFollowersCount = (TextView) view.findViewById(R.id.tvFollowersCount);
-		tvFollowingCount = (TextView) view.findViewById(R.id.tvFollowingCount);
-
 		populateUserDetails();
 		return view;
 	}
@@ -76,9 +68,6 @@ public class UserTaglineFragment extends Fragment {
 				ImageLoader imageLoader = ImageLoader.getInstance();
 				imageLoader.displayImage(user.getUserProfileBackgroundPicUrl(), ivUserProfileBackground);
 			}
-			tvTweetCount.setText(TwitterCountsFormatter.getCountString(user.getTweetsCount()));
-			tvFollowingCount.setText(TwitterCountsFormatter.getCountString(user.getFollowingCount()));
-			tvFollowersCount.setText(TwitterCountsFormatter.getCountString(user.getFollowersCount()));
 
 		} else {
 			Log.d(LOG_TAG_CLASS, "User details are not found in DB");
