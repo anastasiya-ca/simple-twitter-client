@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sunnydaycorp.simpletwitterapp.R;
-import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.TwitterAPIReqCode;
 

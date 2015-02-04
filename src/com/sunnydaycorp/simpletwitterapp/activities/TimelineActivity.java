@@ -26,12 +26,14 @@ import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.ResultCode
 
 public class TimelineActivity extends ActionBarActivity implements ActionBar.TabListener {
 
+	public static final String LOG_TAG_CLASS = TimelineActivity.class.getSimpleName();
 	public static final String USER_ID_EXTRA_TAG = "USER_ID";
+	public static final String NEW_TWEET_POSTED_INTENT_FILTER = "new-tweet-posted";
 
 	private TimelineActivityTabsPagerAdapter viewPagerAdapter;
 	private ViewPager viewPager;
 
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver newTweetPostBroadcastReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -56,16 +58,14 @@ public class TimelineActivity extends ActionBarActivity implements ActionBar.Tab
 				if (homeTimelineFragment != null) {
 					homeTimelineFragment.refreshTimeline();
 				}
-				// only required if user mentions himself
+				// only affected if user mentions himself
 				MentionsTimelineFragment mentionsTimelineFragment = viewPagerAdapter.getMentionsTimelineFragment();
 				if (mentionsTimelineFragment != null) {
 					mentionsTimelineFragment.refreshTimeline();
 				}
 				break;
 			}
-
 		}
-
 	};
 
 	@Override
@@ -78,22 +78,21 @@ public class TimelineActivity extends ActionBarActivity implements ActionBar.Tab
 	private void setupTabs() {
 		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		viewPagerAdapter = new TimelineActivityTabsPagerAdapter(getSupportFragmentManager());
 		viewPager = (ViewPager) findViewById(R.id.vpTimelineActivityContainer);
 		viewPager.setAdapter(viewPagerAdapter);
-
+		for (int i = 0; i < viewPagerAdapter.getCount(); i++) {
+			actionBar.addTab(actionBar.newTab().setText(viewPagerAdapter.getPageTitle(i)).setTabListener(this));
+		}
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				actionBar.setSelectedNavigationItem(position);
 			}
 		});
-		for (int i = 0; i < viewPagerAdapter.getCount(); i++) {
-			actionBar.addTab(actionBar.newTab().setText(viewPagerAdapter.getPageTitle(i)).setTabListener(this));
-		}
 	}
 
 	@Override
@@ -105,17 +104,22 @@ public class TimelineActivity extends ActionBarActivity implements ActionBar.Tab
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_new_tweet) {
+		switch (id) {
+		case R.id.action_new_tweet:
 			showNewTweetDialog();
 			return true;
-		}
-		if (id == R.id.action_view_profile) {
-			Intent i = new Intent(this, UserProfileActivity.class);
-			i.putExtra(USER_ID_EXTRA_TAG, Long.valueOf(((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails().getUserId()));
-			startActivity(i);
+		case R.id.action_view_profile:
+			openLoggedUserProfile();
 			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
+	}
+
+	private void openLoggedUserProfile() {
+		Intent i = new Intent(this, UserProfileActivity.class);
+		i.putExtra(USER_ID_EXTRA_TAG, Long.valueOf(((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails().getUserId()));
+		startActivity(i);
 	}
 
 	private void showNewTweetDialog() {
@@ -131,7 +135,6 @@ public class TimelineActivity extends ActionBarActivity implements ActionBar.Tab
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		if (viewPager.getCurrentItem() != tab.getPosition())
 			viewPager.setCurrentItem(tab.getPosition());
-
 	}
 
 	@Override
@@ -140,13 +143,13 @@ public class TimelineActivity extends ActionBarActivity implements ActionBar.Tab
 
 	@Override
 	public void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("new-tweet-posted"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(newTweetPostBroadcastReceiver, new IntentFilter(NEW_TWEET_POSTED_INTENT_FILTER));
 		super.onResume();
 	}
 
 	@Override
-	public void onStop() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-		super.onStop();
+	public void onPause() {
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(newTweetPostBroadcastReceiver);
+		super.onPause();
 	}
 }

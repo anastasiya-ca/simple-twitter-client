@@ -21,9 +21,9 @@ import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
 import com.sunnydaycorp.simpletwitterapp.activities.TweetDetailsActivity;
 import com.sunnydaycorp.simpletwitterapp.adapters.TimelineTweetListItemAdapter;
-import com.sunnydaycorp.simpletwitterapp.interfaces.DatabaseAwareTimelineResponseListener;
-import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.DatabaseAwareTimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.listeners.EndlessScrollListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.TwitterAPIReqCode;
@@ -94,6 +94,9 @@ public abstract class TweetListFragment extends Fragment {
 					break;
 				case MORE_OLD_LOAD:
 					addTweetsOnMoreOldLoad(tweets);
+					if (tweets.size() == 0) {
+						endlessScrollListener.setIsEndReached(true);
+					}
 					break;
 				}
 				updateLoadAsCompleted();

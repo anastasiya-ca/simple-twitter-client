@@ -10,7 +10,8 @@
         android:id="@+id/ivRetweetedIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tvRetweetedText"
@@ -18,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/ivRetweetedIcon"
         android:layout_margin="10dp"
-        android:layout_toRightOf="@id/ivRetweetedIcon" />
+        android:layout_toRightOf="@id/ivRetweetedIcon"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/ivUserProfilePic"

@@ -5,7 +5,8 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,21 +18,30 @@ import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 public class TweetDetailsActivity extends Activity {
 
 	public static final String LOG_TAG_CLASS = TweetDetailsActivity.class.getSimpleName();
-	public static final String IMAGE_LOADING_ERROR_MESSAGE = "Sorry image is not available";
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a \u00B7 dd MMM yy");
 
 	private ImageView ivUserProfilePic;
+	private ImageView ivTweetImage;
 	private TextView tvUserName;
 	private TextView tvUserScreenName;
-	private TextView tvTimeStamp;
-	private ImageView ivTweetImage;
+	private TextView tvTimestamp;
 	private TextView tvTweetText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tweet_details);
-
 		setupViews();
+	}
+
+	private void setupViews() {
+		ivUserProfilePic = (ImageView) findViewById(R.id.ivUserProfilePic);
+		tvUserName = (TextView) findViewById(R.id.tvUserName);
+		tvUserScreenName = (TextView) findViewById(R.id.tvUserScreenName);
+		tvTimestamp = (TextView) findViewById(R.id.tvTimestamp);
+		tvTweetText = (TextView) findViewById(R.id.tvTweetText);
+		ivTweetImage = (ImageView) findViewById(R.id.ivTweetImage);
+
 		long tweetId = getIntent().getLongExtra(TweetListFragment.TWEET_ID_EXTRA_TAG, 0);
 		Tweet tweet = Tweet.byTweetId(tweetId);
 		if (tweet != null) {
@@ -40,22 +50,25 @@ public class TweetDetailsActivity extends Activity {
 				tvUserScreenName.setText("@" + tweet.getUser().getUserScreenName());
 				ImageLoader imageLoader = ImageLoader.getInstance();
 				imageLoader.displayImage(tweet.getUser().getUserProfilePicUrl(), ivUserProfilePic);
-
+			} else {
+				Log.d(LOG_TAG_CLASS, "user is not found in local DB");
 			}
-
 			tvTweetText.setText(tweet.getText());
-			ivTweetImage.setVisibility(View.GONE);
-			SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a \u00B7 dd MMM yy");
-			tvTimeStamp.setText(sdf.format(new Date(tweet.getCreatedAt())));
+			tvTimestamp.setText(sdf.format(new Date(tweet.getCreatedAt())));
+		} else {
+			Log.d(LOG_TAG_CLASS, "tweet with id " + tweetId + " is not found in local DB");
 		}
 	}
 
-	private void setupViews() {
-		ivUserProfilePic = (ImageView) findViewById(R.id.ivUserProfilePic);
-		tvUserName = (TextView) findViewById(R.id.tvUserName);
-		tvUserScreenName = (TextView) findViewById(R.id.tvUserScreenName);
-		tvTimeStamp = (TextView) findViewById(R.id.tvTimeStamp);
-		tvTweetText = (TextView) findViewById(R.id.tvTweetText);
-		ivTweetImage = (ImageView) findViewById(R.id.ivTweetImage);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

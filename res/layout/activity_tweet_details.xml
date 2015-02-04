@@ -51,7 +51,7 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvTimeStamp"
+        android:id="@+id/tvTimestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/tvTweetText"
@@ -66,12 +66,13 @@
         android:id="@+id/ivTweetImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTimeStamp"
+        android:layout_below="@id/tvTimestamp"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dip"
         android:adjustViewBounds="true"
         android:contentDescription="@string/image_content_description"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/pbLoadingImage"

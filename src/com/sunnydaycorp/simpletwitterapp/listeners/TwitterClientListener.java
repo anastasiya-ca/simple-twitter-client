@@ -1,4 +1,4 @@
-package com.sunnydaycorp.simpletwitterapp.interfaces;
+package com.sunnydaycorp.simpletwitterapp.listeners;
 
 import android.content.Context;
 import android.widget.Toast;

@@ -104,4 +104,8 @@ public class SharedLoggedUserDetails {
 		return followingCount;
 	}
 
+	public void setTweetsCount(long tweetsCount) {
+		this.tweetsCount = tweetsCount;
+	}
+
 }

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
 import com.sunnydaycorp.simpletwitterapp.activities.UserProfileActivity;
-import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;

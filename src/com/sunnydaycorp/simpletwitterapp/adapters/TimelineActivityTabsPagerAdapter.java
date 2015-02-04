@@ -1,7 +1,5 @@
 package com.sunnydaycorp.simpletwitterapp.adapters;
 
-import java.util.Locale;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -39,7 +37,6 @@ public class TimelineActivityTabsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		Locale l = Locale.getDefault();
 		switch (position) {
 		case 0:
 			return "Home";

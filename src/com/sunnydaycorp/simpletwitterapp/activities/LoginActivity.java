@@ -2,15 +2,17 @@ package com.sunnydaycorp.simpletwitterapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.codepath.oauth.OAuthLoginActivity;
 import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
-import com.sunnydaycorp.simpletwitterapp.interfaces.LoggedUserInfoResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.LoggedUserInfoResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
 import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
@@ -18,8 +20,10 @@ import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.ResultCode
 
 public class LoginActivity extends OAuthLoginActivity<TwitterRestClient> {
 
-	private Button btnLogin;
+	public static final String LOG_TAG_CLASS = LoginActivity.class.getSimpleName();
 
+	private Button btnLogin;
+	private ProgressBar pbLoadingUserDetails;
 	private LoggedUserInfoResponseListener loggedUserInfoResponseListener = new LoggedUserInfoResponseListener(this) {
 
 		@Override
@@ -44,6 +48,7 @@ public class LoginActivity extends OAuthLoginActivity<TwitterRestClient> {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		btnLogin = (Button) findViewById(R.id.btnLogin);
+		pbLoadingUserDetails = (ProgressBar) findViewById(R.id.pbLoadingUserDetails);
 		btnLogin.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -54,7 +59,9 @@ public class LoginActivity extends OAuthLoginActivity<TwitterRestClient> {
 
 	@Override
 	public void onLoginSuccess() {
-		TwitterRestClient twitterRestClient = ((SimpleTwitterApp) this.getApplication()).getRestClient();
+		btnLogin.setVisibility(View.GONE);
+		pbLoadingUserDetails.setVisibility(View.VISIBLE);
+		TwitterRestClient twitterRestClient = ((SimpleTwitterApp) getApplication()).getRestClient();
 		twitterRestClient.verifyAndGetUserCredentials(loggedUserInfoResponseListener);
 	}
 
@@ -67,7 +74,7 @@ public class LoginActivity extends OAuthLoginActivity<TwitterRestClient> {
 	@Override
 	public void onLoginFailure(Exception e) {
 		Toast.makeText(this, "Login failed. Please try to login again", Toast.LENGTH_SHORT).show();
-		e.printStackTrace();
+		Log.e(LOG_TAG_CLASS, e.toString());
 	}
 
 	public void loginToRest(View view) {

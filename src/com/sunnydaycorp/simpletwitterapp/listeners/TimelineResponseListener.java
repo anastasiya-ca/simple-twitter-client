@@ -1,4 +1,4 @@
-package com.sunnydaycorp.simpletwitterapp.interfaces;
+package com.sunnydaycorp.simpletwitterapp.listeners;
 
 import java.util.List;
 

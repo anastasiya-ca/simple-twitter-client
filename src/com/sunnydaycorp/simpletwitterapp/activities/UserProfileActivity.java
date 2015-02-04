@@ -5,23 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sunnydaycorp.simpletwitterapp.R;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
+import com.sunnydaycorp.simpletwitterapp.adapters.UserProfileDetailsPagerAdapter;
 import com.sunnydaycorp.simpletwitterapp.formatters.TwitterCountsFormatter;
-import com.sunnydaycorp.simpletwitterapp.fragments.UserProfileFragment;
-import com.sunnydaycorp.simpletwitterapp.fragments.UserTaglineFragment;
 import com.sunnydaycorp.simpletwitterapp.fragments.UserTimelineFragment;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
@@ -29,14 +25,13 @@ import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient.ResultCode
 
 public class UserProfileActivity extends FragmentActivity {
 
-	public static final String USER_ID_TAG = "user_id";
+	public static final String LOG_TAG_CLASS = UserProfileActivity.class.getSimpleName();
+	public static final String USER_ID_TAG = "USER_ID";
+	public static final String NEW_TWEET_POSTED_INTENT_FILTER = "new-tweet-posted";
+	public static final String USER_COUNTS_UPDATED_INTENT_FILTER = "user-counts-updated";
 
-	private static final int NUM_PAGES = 2;
-
-	private int count = 0;
-
-	private ViewPager mPager;
-	private PagerAdapter mPagerAdapter;
+	private UserProfileDetailsPagerAdapter viewPagerAdapter;
+	private ViewPager viewPager;
 
 	private TextView tvTweetCount;
 	private TextView tvFollowingCount;
@@ -45,11 +40,7 @@ public class UserProfileActivity extends FragmentActivity {
 	private long userId;
 	private boolean isOwnProfile;
 
-	private UserProfileFragment userProfileFragment;
-	private UserTaglineFragment userTaglineFragment;
 	private UserTimelineFragment userTimelineFragment;
-
-	public static final String LOG_TAG_CLASS = UserProfileActivity.class.getSimpleName();
 
 	private BroadcastReceiver newTweetPostedBroadcastReceiver = new BroadcastReceiver() {
 
@@ -101,99 +92,72 @@ public class UserProfileActivity extends FragmentActivity {
 		userId = getIntent().getLongExtra(TimelineActivity.USER_ID_EXTRA_TAG, 0);
 
 		SharedLoggedUserDetails loggedUserDetails = ((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails();
-
 		if (userId == loggedUserDetails.getUserId()) {
 			isOwnProfile = true;
 		}
-
-		tvTweetCount = (TextView) findViewById(R.id.tvTweetCount);
-		tvFollowersCount = (TextView) findViewById(R.id.tvFollowersCount);
-		tvFollowingCount = (TextView) findViewById(R.id.tvFollowingCount);
-
-		userTaglineFragment = UserTaglineFragment.newInstance(userId);
-		userProfileFragment = UserProfileFragment.newInstance(userId);
+		setupViews();
 
 		FragmentTransaction sft = getSupportFragmentManager().beginTransaction();
 		userTimelineFragment = UserTimelineFragment.newInstance(userId, isOwnProfile);
 		sft.add(R.id.flUserTimelineContainer, userTimelineFragment);
 		sft.commit();
 
-		mPager = (ViewPager) findViewById(R.id.vpUserProfileContainer);
-		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-		mPager.setAdapter(mPagerAdapter);
+		viewPager = (ViewPager) findViewById(R.id.vpUserProfileContainer);
+		viewPagerAdapter = new UserProfileDetailsPagerAdapter(getSupportFragmentManager(), userId);
+		viewPager.setAdapter(viewPagerAdapter);
+	}
 
+	private void setupViews() {
+		tvTweetCount = (TextView) findViewById(R.id.tvTweetCount);
+		tvFollowersCount = (TextView) findViewById(R.id.tvFollowersCount);
+		tvFollowingCount = (TextView) findViewById(R.id.tvFollowingCount);
 		populateUserCounts();
-
 	}
 
 	private void populateUserCounts() {
-		count++;
-		SharedLoggedUserDetails loggedUserDetails = ((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails();
 		TwitterUser user = TwitterUser.byRemoteId(userId);
 		if (user == null && isOwnProfile) {
+			SharedLoggedUserDetails loggedUserDetails = ((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails();
 			// if logged user is not in db then he/she does not have tweets anymore - any tweet count received on verify user details is out-dated
+			loggedUserDetails.setTweetsCount(0);
 			user = new TwitterUser(loggedUserDetails.getUserId(), loggedUserDetails.getUserName(), loggedUserDetails.getUserScreenName(),
-					loggedUserDetails.getUserProfilePicUrl(), loggedUserDetails.getUserProfileBackgroundPicUrl(), 0,
+					loggedUserDetails.getUserProfilePicUrl(), loggedUserDetails.getUserProfileBackgroundPicUrl(), loggedUserDetails.getTweetsCount(),
 					loggedUserDetails.getFollowersCount(), loggedUserDetails.getFollowingCount(), loggedUserDetails.getUserTagline());
 		}
-
 		if (user != null) {
 			tvTweetCount.setText(TwitterCountsFormatter.getCountString(user.getTweetsCount()));
-			Log.e("COUNTS", "populate counts number " + count + ": " + user.getTweetsCount());
 			tvFollowingCount.setText(TwitterCountsFormatter.getCountString(user.getFollowingCount()));
 			tvFollowersCount.setText(TwitterCountsFormatter.getCountString(user.getFollowersCount()));
-
 		} else {
-			Log.d(LOG_TAG_CLASS, "User details are not found in DB");
+			Log.e(LOG_TAG_CLASS, "User with id " + userId + " is not found in DB");
 		}
-
 	}
 
 	@Override
-	public void onBackPressed() {
-		if (mPager.getCurrentItem() == 0) {
-			super.onBackPressed();
-		} else {
-			mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-		}
-	}
-
-	private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
-		public ScreenSlidePagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			switch (position) {
-			case 0:
-				return userProfileFragment;
-			case 1:
-				return userTaglineFragment;
-			default:
-				return null;
-			}
-		}
-
-		@Override
-		public int getCount() {
-			return NUM_PAGES;
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
 	@Override
 	public void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(newTweetPostedBroadcastReceiver, new IntentFilter("new-tweet-posted"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(countsUpdatedBroadcastReceiver, new IntentFilter("user-counts-updated"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(newTweetPostedBroadcastReceiver, new IntentFilter(NEW_TWEET_POSTED_INTENT_FILTER));
+		LocalBroadcastManager.getInstance(this).registerReceiver(countsUpdatedBroadcastReceiver, new IntentFilter(USER_COUNTS_UPDATED_INTENT_FILTER));
 		populateUserCounts();
 		super.onResume();
 	}
 
 	@Override
-	public void onStop() {
+	public void onPause() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(newTweetPostedBroadcastReceiver);
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(countsUpdatedBroadcastReceiver);
-		super.onStop();
+		super.onPause();
 	}
 
 }

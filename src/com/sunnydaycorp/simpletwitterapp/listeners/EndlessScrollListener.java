@@ -1,5 +1,6 @@
 package com.sunnydaycorp.simpletwitterapp.listeners;
 
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -9,6 +10,7 @@ public abstract class EndlessScrollListener implements OnScrollListener {
 
 	private int previousTotalItemCount = 0;
 	private boolean isLoading = true;
+	private boolean isEndReached = false;
 
 	public EndlessScrollListener() {
 	}
@@ -33,7 +35,8 @@ public abstract class EndlessScrollListener implements OnScrollListener {
 
 		// If it isn’t currently loading, we check to see if we have breached
 		// the visibleThreshold and need to reload more data.
-		if (!isLoading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+		if (!isLoading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold) && !isEndReached) {
+			Log.d("LOAD_MORE", "on load more is called with isLoading:" + isLoading + " isEndReached:" + isEndReached);
 			onLoadMore();
 			isLoading = true;
 		}
@@ -43,6 +46,11 @@ public abstract class EndlessScrollListener implements OnScrollListener {
 
 	public void setLoadAsFailed() {
 		isLoading = false;
+	}
+
+	public void setIsEndReached(boolean isEndReached) {
+		Log.d("LOAD_MORE", "end is reached is set to " + isEndReached);
+		this.isEndReached = isEndReached;
 	}
 
 	@Override

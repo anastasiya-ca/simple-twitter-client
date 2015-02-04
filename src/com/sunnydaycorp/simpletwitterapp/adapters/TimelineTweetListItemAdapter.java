@@ -31,8 +31,8 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 
 	private static class ViewHolder {
 		ImageView ivRetweetedIcon;
-		ImageView ivUserProfilePic;
 		TextView tvRetweetedText;
+		ImageView ivUserProfilePic;
 		TextView tvUserName;
 		TextView tvTimeStamp;
 		TextView tvUserScreenName;
@@ -45,7 +45,7 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 	public TimelineTweetListItemAdapter(Context context, List<Tweet> tweets) {
 		super(context, R.layout.timeline_tweets_list_item, tweets);
 		outMetrics = new DisplayMetrics();
-		((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(outMetrics);
+		((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(outMetrics);
 	}
 
 	@Override
@@ -55,9 +55,7 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 
 		if (convertView == null) {
 			convertView = LayoutInflater.from(getContext()).inflate(R.layout.timeline_tweets_list_item, parent, false);
-
 			ViewHolder viewHolder = new ViewHolder();
-
 			viewHolder.ivRetweetedIcon = (ImageView) convertView.findViewById(R.id.ivRetweetedIcon);
 			viewHolder.ivUserProfilePic = (ImageView) convertView.findViewById(R.id.ivUserProfilePic);
 			viewHolder.tvRetweetedText = (TextView) convertView.findViewById(R.id.tvRetweetedText);
@@ -77,7 +75,6 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 					i.putExtra(TimelineActivity.USER_ID_EXTRA_TAG, (Long) v.getTag());
 					i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					TimelineTweetListItemAdapter.this.getContext().startActivity(i);
-
 				}
 			});
 
@@ -89,6 +86,7 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 					newFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "onNewTweetDialog");
 				}
 			});
+
 			convertView.setTag(viewHolder);
 		}
 
@@ -104,25 +102,23 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 			convertView.setBackgroundResource(R.drawable.timeline_tweet_background);
 		}
 
-		viewHolder.ivRetweetedIcon.setVisibility(View.GONE);
-		viewHolder.tvRetweetedText.setVisibility(View.GONE);
-		ImageLoader imageLoader = ImageLoader.getInstance();
-		viewHolder.ivUserProfilePic.setImageResource(0);
 		if (tweet.getUser() != null) {
 			viewHolder.tvUserName.setText(tweet.getUser().getUserName());
 			viewHolder.tvUserScreenName.setText("@" + tweet.getUser().getUserScreenName());
-			// reset image from recycled view
 
+			viewHolder.ivUserProfilePic.setImageResource(0);
+			ImageLoader imageLoader = ImageLoader.getInstance();
 			imageLoader.displayImage(tweet.getUser().getUserProfilePicUrl(), viewHolder.ivUserProfilePic);
 		}
+
 		viewHolder.tvTweetText.setText(tweet.getText());
 		viewHolder.tvTimeStamp.setText(ElapsedTimeFormatter.getElapsedTimeString(new Date(tweet.getCreatedAt())));
-		viewHolder.ivUserProfilePic.setTag(userId);
-
-		viewHolder.ivReplyIcon.setTag("@" + tweet.getUser().getUserScreenName());
-
 		viewHolder.tvRetweetedCount.setText(String.valueOf(tweet.getRetweetCount()));
 		viewHolder.tvFollowersCount.setText(String.valueOf(tweet.getFavoritesCount()));
+
+		viewHolder.ivUserProfilePic.setTag(userId);
+		viewHolder.ivReplyIcon.setTag("@" + tweet.getUser().getUserScreenName());
+
 		return convertView;
 	}
 
@@ -137,7 +133,6 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 			}
 		}
 		notifyDataSetChanged();
-
 	}
 
 	public void insertAll(Tweet tweet) {

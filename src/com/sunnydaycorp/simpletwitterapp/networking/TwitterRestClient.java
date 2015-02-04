@@ -19,8 +19,8 @@ import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sunnydaycorp.simpletwitterapp.SimpleTwitterApp;
-import com.sunnydaycorp.simpletwitterapp.interfaces.LoggedUserInfoResponseListener;
-import com.sunnydaycorp.simpletwitterapp.interfaces.TimelineResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.LoggedUserInfoResponseListener;
+import com.sunnydaycorp.simpletwitterapp.listeners.TimelineResponseListener;
 import com.sunnydaycorp.simpletwitterapp.models.SharedLoggedUserDetails;
 import com.sunnydaycorp.simpletwitterapp.models.Tweet;
 import com.sunnydaycorp.simpletwitterapp.models.TwitterUser;
@@ -65,12 +65,17 @@ public class TwitterRestClient extends OAuthBaseClient {
 		public void onError(ResultCode resultCode);
 	}
 
-	private void makeRequest(String apiPath, RequestParams params, final TwitterRequestListener requestListener) {
+	private void makeRequest(String apiPath, boolean isFullURL, RequestParams params, final TwitterRequestListener requestListener) {
 		if (!checkForNetworkAvailability()) {
 			Log.w(LOG_TAG_CLASS, "No Internet connection");
 			requestListener.onError(ResultCode.NO_INTERNET);
 		} else {
-			String apiUrl = getApiUrl(apiPath);
+			String apiUrl;
+			if (!isFullURL) {
+				apiUrl = getApiUrl(apiPath);
+			} else {
+				apiUrl = apiPath;
+			}
 			Log.i(LOG_TAG_CLASS, "Sending request to Twitter API with params " + (params != null ? params.toString() : null));
 
 			client.get(apiUrl, params, new JsonHttpResponseHandler() {
@@ -83,6 +88,7 @@ public class TwitterRestClient extends OAuthBaseClient {
 				@Override
 				public void onSuccess(int statusCode, JSONObject response) {
 					Log.i(LOG_TAG_CLASS, "Received JSONObject success response from Twitter API: " + response.toString());
+					requestListener.onSuccess(response);
 				}
 
 				@Override
@@ -137,7 +143,7 @@ public class TwitterRestClient extends OAuthBaseClient {
 	private void fetchTimelineTweets(String apiPath, final TwitterAPIReqCode requestCode, final TimelineResponseListener listener, long sinceId,
 			long maxId, Long userId, final boolean isMentionsTimeline) {
 		RequestParams params = getTimelineRequestParams(requestCode, sinceId, maxId, userId);
-		makeRequest(apiPath, params, new TwitterRequestListener() {
+		makeRequest(apiPath, false, params, new TwitterRequestListener() {
 			@Override
 			public void onSuccess(JSONObject response) {
 				Log.i(LOG_TAG_CLASS, "Received unexpected JSONObject success response from Twitter API: " + response.toString());
@@ -232,15 +238,9 @@ public class TwitterRestClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl(VERIFY_CREDENTIALS_PATH);
 		RequestParams params = null;
 
-		client.get(apiUrl, params, new JsonHttpResponseHandler() {
+		makeRequest(apiUrl, true, params, new TwitterRequestListener() {
 			@Override
-			public void onSuccess(int statusCode, JSONArray response) {
-				Log.e(LOG_TAG_CLASS, "Received unexpected JSONArray success response from Twitter API: " + response.toString());
-				listener.onErrorResult(ResultCode.FAILED_REQUEST);
-			}
-
-			@Override
-			public void onSuccess(int statusCode, JSONObject response) {
+			public void onSuccess(JSONObject response) {
 				Log.i(LOG_TAG_CLASS, "Received JSONObject success response from Twitter API: " + response.toString());
 				try {
 					TwitterUser user = TwitterUser.fromJSON(response);
@@ -256,17 +256,15 @@ public class TwitterRestClient extends OAuthBaseClient {
 			}
 
 			@Override
-			public void onFailure(Throwable throwable, JSONObject errorResponse) {
-				Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
+			public void onSuccess(JSONArray response) {
+				Log.e(LOG_TAG_CLASS, "Received unexpected JSONArray success response from Twitter API: " + response.toString());
 				listener.onErrorResult(ResultCode.FAILED_REQUEST);
 			}
 
 			@Override
-			public void onFailure(Throwable throwable, JSONArray errorResponse) {
-				Log.e(LOG_TAG_CLASS, errorResponse.toString(), throwable);
-				listener.onErrorResult(ResultCode.FAILED_REQUEST);
+			public void onError(ResultCode resultCode) {
+				listener.onErrorResult(resultCode);
 			}
-
 		});
 
 	}
