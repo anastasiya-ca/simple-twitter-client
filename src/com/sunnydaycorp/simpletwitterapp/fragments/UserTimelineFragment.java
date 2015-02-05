@@ -5,7 +5,6 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +41,6 @@ public class UserTimelineFragment extends TweetListFragment {
 		super.onCreate(savedInstanceState);
 		userId = getArguments().getLong(UserProfileActivity.USER_ID_TAG, 0);
 		isOwnProfile = getArguments().getBoolean("IS_OWN_PROFILE", false);
-		Log.d("DEBUG2", "user time line is created for " + userId + "isOwnProfile:" + isOwnProfile);
-		screenUserName = "@user";
 		TwitterUser user = TwitterUser.byRemoteId(userId);
 		if (user != null) {
 			screenUserName = "@" + user.getUserScreenName();
@@ -68,15 +65,12 @@ public class UserTimelineFragment extends TweetListFragment {
 	public void fetchTimelineTweets(TwitterAPIReqCode twitterAPIReqCode, TimelineResponseListener timelineResponseListener) {
 		switch (twitterAPIReqCode) {
 		case NEW_LOAD:
-			Log.d("DEBUG2", "user timeline new load for " + userId + "isOwnProfile:" + isOwnProfile);
 			twitterRestClient.fetchUserTimelineTweets(twitterAPIReqCode, timelineResponseListener, 0, 0, userId);
 			break;
 		case REFRESH_LOAD:
-			Log.d("DEBUG2", "user timeline refresh load for " + userId + "isOwnProfile:" + isOwnProfile);
 			twitterRestClient.fetchUserTimelineTweets(twitterAPIReqCode, timelineResponseListener, getFirstItemTweetId(), 0, userId);
 			break;
 		case MORE_OLD_LOAD:
-			Log.d("DEBUG2", "user timeline more old load for " + userId + "isOwnProfile:" + isOwnProfile);
 			twitterRestClient.fetchUserTimelineTweets(twitterAPIReqCode, timelineResponseListener, 0, getLastItemTweetId() - 1, userId);
 			break;
 		}

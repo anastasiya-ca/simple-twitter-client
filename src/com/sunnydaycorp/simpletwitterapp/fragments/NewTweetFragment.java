@@ -23,15 +23,14 @@ import com.sunnydaycorp.simpletwitterapp.networking.TwitterRestClient;
 
 public class NewTweetFragment extends DialogFragment {
 
-	public final static String LISTENER_EXTRA_TAG = "NEW_TWEET_POSTED_LISTENER";
 	public final static String REPLY_TO_EXTRA_TAG = "REPLY_TO_USER_NAME";
 	public final static int MAXIMUM_CHAR_NUMBER = 140;
 
 	private Button btnCancelNewTweet;
 	private Button btnTweetNewTweet;
 	private TextView tvNewTweetCharsNumber;
-	private ImageView ivNewTweetUserProfilePic;
 	private TextView tvNewTweetUserScreenName;
+	private ImageView ivNewTweetUserProfilePic;
 	private EditText etNewTweetText;
 
 	private TwitterRestClient twitterRestClient;
@@ -58,45 +57,32 @@ public class NewTweetFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_new_tweet, container);
+
 		btnCancelNewTweet = (Button) view.findViewById(R.id.btnCancelNewTweet);
 		btnTweetNewTweet = (Button) view.findViewById(R.id.btnTweetNewTweet);
 		tvNewTweetCharsNumber = (TextView) view.findViewById(R.id.tvNewTweetCharNumber);
 		ivNewTweetUserProfilePic = (ImageView) view.findViewById(R.id.ivNewTweetUserProfilePic);
 		tvNewTweetUserScreenName = (TextView) view.findViewById(R.id.tvNewTweetUserScreenName);
 		etNewTweetText = (EditText) view.findViewById(R.id.etNewTweetText);
+		setupFields();
+
 		getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-		setupFields();
 		return view;
 	}
 
 	private void setupFields() {
 		SharedLoggedUserDetails loggedUserDetails = ((SimpleTwitterApp) getActivity().getApplicationContext()).getSharedLoggedUserDetails();
-
-		btnCancelNewTweet.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				cancelNewTweet(v);
-			}
-		});
-		btnTweetNewTweet.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				postNewTweet(v);
-			}
-		});
-
-		if (replyToUserName != null && !replyToUserName.isEmpty()) {
-			etNewTweetText.setText(replyToUserName + " ");
-			etNewTweetText.setSelection(getNewTweetCharsCount());
-		}
-
 		tvNewTweetUserScreenName.setText("@" + loggedUserDetails.getUserScreenName());
 		if (!loggedUserDetails.getUserProfilePicUrl().isEmpty()) {
 			ImageLoader imageLoader = ImageLoader.getInstance();
 			imageLoader.displayImage(loggedUserDetails.getUserProfilePicUrl(), ivNewTweetUserProfilePic);
 		}
 
+		if (replyToUserName != null && !replyToUserName.isEmpty()) {
+			etNewTweetText.setText(replyToUserName + " ");
+			etNewTweetText.setSelection(getNewTweetCharsCount());
+		}
 		etNewTweetText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -116,6 +102,19 @@ public class NewTweetFragment extends DialogFragment {
 		setNewTweetCharsNumber();
 		activateTweetNewTweetButton();
 		etNewTweetText.requestFocus();
+
+		btnCancelNewTweet.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				cancelNewTweet(v);
+			}
+		});
+		btnTweetNewTweet.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				postNewTweet(v);
+			}
+		});
 	}
 
 	private int getNewTweetCharsLeftCount() {
@@ -145,7 +144,6 @@ public class NewTweetFragment extends DialogFragment {
 	public void cancelNewTweet(View view) {
 		closeInputFromWindow();
 		getDialog().dismiss();
-
 	}
 
 	public void postNewTweet(View view) {

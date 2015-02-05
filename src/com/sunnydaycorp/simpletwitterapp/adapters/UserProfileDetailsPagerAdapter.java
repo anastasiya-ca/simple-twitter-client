@@ -9,6 +9,8 @@ import com.sunnydaycorp.simpletwitterapp.fragments.UserTaglineFragment;
 
 public class UserProfileDetailsPagerAdapter extends FragmentPagerAdapter {
 
+	private static int MAX_PAGE_NUMBER = 2;
+
 	private UserProfileFragment userProfileFragment;
 	private UserTaglineFragment userTaglineFragment;
 
@@ -31,7 +33,7 @@ public class UserProfileDetailsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		return 2;
+		return MAX_PAGE_NUMBER;
 	}
 
 	@Override

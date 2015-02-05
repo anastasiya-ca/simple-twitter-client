@@ -52,6 +52,7 @@ public class UserProfileFragment extends Fragment {
 		ivUserProfilePic = (ImageView) view.findViewById(R.id.ivUserProfilePic);
 		tvUserName = (TextView) view.findViewById(R.id.tvUserName);
 		tvUserScreenName = (TextView) view.findViewById(R.id.tvUserScreenName);
+
 		populateUserDetails();
 		return view;
 	}
@@ -79,7 +80,7 @@ public class UserProfileFragment extends Fragment {
 			}
 
 		} else {
-			Log.d(LOG_TAG_CLASS, "User details are not found in DB");
+			Log.d(LOG_TAG_CLASS, "User with id " + userId + " not found in DB");
 		}
 
 	}

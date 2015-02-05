@@ -42,11 +42,10 @@ public abstract class DatabaseAwareTimelineResponseListener extends TimelineResp
 			tweet.setUser(user);
 			tweet.save();
 			Log.d("DEBUG",
-					"Misha saving tweet User:" + tweet.getUser().getUserName() + " tweet:" + tweet.getTweetId() + " Mention:"
-							+ tweet.isMentionsTweet());
+					"Saving tweet User:" + tweet.getUser().getUserName() + " tweet:" + tweet.getTweetId() + " Mention:" + tweet.isMentionsTweet());
 
-			Log.d("DEBUG", "Misha " + TwitterUser.recordCount() + " users in DB");
-			Log.d("DEBUG", "Misha " + Tweet.recordCount() + " tweets in DB");
+			Log.d("DEBUG", "There are " + TwitterUser.recordCount() + " users in DB");
+			Log.d("DEBUG", "There are " + Tweet.recordCount() + " tweets in DB");
 		}
 		Log.d("DEBUG", "On save there are " + TwitterUser.recordCount() + " users in DB");
 		Log.d("DEBUG", "On save there are " + Tweet.recordCount() + " tweets in DB");

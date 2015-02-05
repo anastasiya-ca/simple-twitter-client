@@ -56,7 +56,7 @@ public class HomeTimelineFragment extends TweetListFragment {
 
 	@Override
 	public void updateUserCountsTimelineRefreshed() {
-		// not required
+		// not used
 	}
 
 }

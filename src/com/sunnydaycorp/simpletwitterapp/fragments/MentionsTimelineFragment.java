@@ -55,8 +55,7 @@ public class MentionsTimelineFragment extends TweetListFragment {
 
 	@Override
 	public void updateUserCountsTimelineRefreshed() {
-		// not required
-
+		// not used
 	}
 
 }

@@ -40,10 +40,9 @@ public abstract class TweetListFragment extends Fragment {
 	private LinearLayout llNoTweetsMessage;
 	private TextView tvNoTweetsMessage;
 
-	private boolean isLoadingTimeline = false;
 	protected TwitterRestClient twitterRestClient;
-
 	private TimelineResponseListener timelineResponseListener;
+	private boolean isLoadingTimeline = false;
 
 	private EndlessScrollListener endlessScrollListener = new EndlessScrollListener() {
 
@@ -55,7 +54,6 @@ public abstract class TweetListFragment extends Fragment {
 			} else {
 				updateLoadAsInProgress();
 			}
-
 		}
 	};
 
@@ -73,12 +71,11 @@ public abstract class TweetListFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		List<Tweet> tweets = new ArrayList<Tweet>();
-
-		twitterRestClient = ((SimpleTwitterApp) getActivity().getApplication()).getRestClient();
-
 		adapter = new TimelineTweetListItemAdapter(getActivity(), tweets);
 
+		twitterRestClient = ((SimpleTwitterApp) getActivity().getApplication()).getRestClient();
 		timelineResponseListener = new DatabaseAwareTimelineResponseListener(getActivity()) {
 
 			@Override
@@ -107,7 +104,7 @@ public abstract class TweetListFragment extends Fragment {
 			@Override
 			public void onErrorResult(TwitterRestClient.ResultCode resultCode) {
 				updateLoadAsCompleted();
-				updateEndlessScrollListnerOnLoadCompleted();
+				updateEndlessScrollListnerOnLoadError();
 				super.onErrorResult(resultCode);
 			}
 
@@ -133,7 +130,7 @@ public abstract class TweetListFragment extends Fragment {
 		lvTimelineTweets.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				openTweetDetails(adapter.getItem(position).getTweetId());
+				openTweetDetails(adapter.getItemId(position));
 			}
 		});
 		return view;
@@ -180,25 +177,25 @@ public abstract class TweetListFragment extends Fragment {
 	private void updateLoadAsCompleted() {
 		isLoadingTimeline = false;
 		setNoTweetsMessageVisibility();
-		if (llLoadingIndicator != null) {
-			llLoadingIndicator.setVisibility(View.GONE);
-		}
+		//		if (llLoadingIndicator != null) {
+		//			llLoadingIndicator.setVisibility(View.GONE);
+		//		}
 		// disable animation for swipe container refreshing
 		if (swipeContainer != null) {
 			swipeContainer.setRefreshing(false);
 		}
 	}
 
-	public void updateEndlessScrollListnerOnLoadCompleted() {
+	public void updateEndlessScrollListnerOnLoadError() {
 		endlessScrollListener.setLoadAsFailed();
 	}
 
 	private void updateLoadAsInProgress() {
 		isLoadingTimeline = true;
 		setNoTweetsMessageVisibility();
-		if (llLoadingIndicator != null) {
-			llLoadingIndicator.setVisibility(View.VISIBLE);
-		}
+		//		if (llLoadingIndicator != null) {
+		//			llLoadingIndicator.setVisibility(View.VISIBLE);
+		//		}
 		// disable animation for swipe container refreshing
 		if (swipeContainer != null) {
 			swipeContainer.setRefreshing(false);
@@ -210,27 +207,17 @@ public abstract class TweetListFragment extends Fragment {
 	}
 
 	public long getLastItemTweetId() {
-		long maxId = 1;
 		if (adapter.getCount() > 0) {
-			maxId = adapter.getItem(adapter.getCount() - 1).getTweetId();
+			return adapter.getItemId(adapter.getCount() - 1);
 		}
-		return maxId;
+		return 1;
 	}
 
 	public long getFirstItemTweetId() {
-		long sinceId = 1;
 		if (adapter.getCount() > 0) {
-			sinceId = adapter.getItem(0).getTweetId();
+			return adapter.getItemId(0);
 		}
-		return sinceId;
-	}
-
-	public long getTweetIdAtPosition(int position) {
-		long tweetId = 0;
-		if (adapter.getCount() > 0 && adapter.getCount() > position) {
-			tweetId = adapter.getItem(position).getTweetId();
-		}
-		return tweetId;
+		return 1;
 	}
 
 	public void setNoTweetsMessageVisibility() {
@@ -243,11 +230,6 @@ public abstract class TweetListFragment extends Fragment {
 				llNoTweetsMessage.setVisibility(View.GONE);
 			}
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
 	}
 
 	public abstract String getEmptyListMessage();

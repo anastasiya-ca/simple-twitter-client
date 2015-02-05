@@ -142,4 +142,9 @@ public class TimelineTweetListItemAdapter extends ArrayAdapter<Tweet> {
 		notifyDataSetChanged();
 	}
 
+	@Override
+	public long getItemId(int position) {
+		return getItem(position).getTweetId();
+	}
+
 }

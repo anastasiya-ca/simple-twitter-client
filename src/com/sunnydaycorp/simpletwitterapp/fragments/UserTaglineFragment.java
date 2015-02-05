@@ -24,6 +24,7 @@ public class UserTaglineFragment extends Fragment {
 	private TextView tvTagline;
 
 	private long userId;
+	private boolean hasTagline;
 
 	public UserTaglineFragment() {
 	}
@@ -45,7 +46,6 @@ public class UserTaglineFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_user_tagline, container, false);
-
 		ivUserProfileBackground = (ImageView) view.findViewById(R.id.ivUserProfileBackground);
 		tvTagline = (TextView) view.findViewById(R.id.tvTagline);
 		populateUserDetails();
@@ -61,17 +61,23 @@ public class UserTaglineFragment extends Fragment {
 					loggedUserDetails.getUserProfilePicUrl(), loggedUserDetails.getUserProfileBackgroundPicUrl(), loggedUserDetails.getTweetsCount(),
 					loggedUserDetails.getFollowersCount(), loggedUserDetails.getFollowingCount(), loggedUserDetails.getUserTagline());
 		}
-
 		if (user != null) {
-			tvTagline.setText(user.getUserTagline());
-			if (!user.getUserProfileBackgroundPicUrl().isEmpty()) {
-				ImageLoader imageLoader = ImageLoader.getInstance();
-				imageLoader.displayImage(user.getUserProfileBackgroundPicUrl(), ivUserProfileBackground);
+			if (user.getUserTagline() != null && !user.getUserTagline().isEmpty()) {
+				hasTagline = true;
+				tvTagline.setText(user.getUserTagline());
+				if (!user.getUserProfileBackgroundPicUrl().isEmpty()) {
+					ImageLoader imageLoader = ImageLoader.getInstance();
+					imageLoader.displayImage(user.getUserProfileBackgroundPicUrl(), ivUserProfileBackground);
+				}
 			}
-
 		} else {
 			Log.d(LOG_TAG_CLASS, "User details are not found in DB");
 		}
 
 	}
+
+	public boolean hasTagline() {
+		return hasTagline;
+	}
+
 }

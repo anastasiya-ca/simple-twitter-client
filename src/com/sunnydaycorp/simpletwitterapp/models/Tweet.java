@@ -140,7 +140,7 @@ public class Tweet extends Model {
 		try {
 			date = dateFormat.parse(createdAtString);
 		} catch (ParseException pe) {
-			Log.e("JSON_PARSING", pe.toString());
+			Log.e("DATE_PARSING", pe.toString());
 		}
 		this.createdAt = date.getTime();
 	}
