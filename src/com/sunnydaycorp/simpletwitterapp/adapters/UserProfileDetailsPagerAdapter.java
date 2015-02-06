@@ -9,7 +9,7 @@ import com.sunnydaycorp.simpletwitterapp.fragments.UserTaglineFragment;
 
 public class UserProfileDetailsPagerAdapter extends FragmentPagerAdapter {
 
-	private static int PAGE_NUMBER = 2;
+	private int pageNum = 2;
 
 	private UserProfileFragment userProfileFragment;
 	private UserTaglineFragment userTaglineFragment;
@@ -18,10 +18,10 @@ public class UserProfileDetailsPagerAdapter extends FragmentPagerAdapter {
 		super(fm);
 		userProfileFragment = UserProfileFragment.newInstance(userId);
 		if (hasUserTagline) {
-			PAGE_NUMBER = 2;
+			pageNum = 2;
 			userTaglineFragment = UserTaglineFragment.newInstance(userId);
 		} else {
-			PAGE_NUMBER = 1;
+			pageNum = 1;
 		}
 	}
 
@@ -38,7 +38,7 @@ public class UserProfileDetailsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		return PAGE_NUMBER;
+		return pageNum;
 	}
 
 	@Override

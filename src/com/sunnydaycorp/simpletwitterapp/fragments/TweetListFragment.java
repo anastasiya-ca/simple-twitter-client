@@ -177,9 +177,9 @@ public abstract class TweetListFragment extends Fragment {
 	private void updateLoadAsCompleted() {
 		isLoadingTimeline = false;
 		setNoTweetsMessageVisibility();
-		//		if (llLoadingIndicator != null) {
-		//			llLoadingIndicator.setVisibility(View.GONE);
-		//		}
+		if (llLoadingIndicator != null) {
+			llLoadingIndicator.setVisibility(View.GONE);
+		}
 		// disable animation for swipe container refreshing
 		if (swipeContainer != null) {
 			swipeContainer.setRefreshing(false);
@@ -193,9 +193,9 @@ public abstract class TweetListFragment extends Fragment {
 	private void updateLoadAsInProgress() {
 		isLoadingTimeline = true;
 		setNoTweetsMessageVisibility();
-		//		if (llLoadingIndicator != null) {
-		//			llLoadingIndicator.setVisibility(View.VISIBLE);
-		//		}
+		if (llLoadingIndicator != null) {
+			llLoadingIndicator.setVisibility(View.VISIBLE);
+		}
 		// disable animation for swipe container refreshing
 		if (swipeContainer != null) {
 			swipeContainer.setRefreshing(false);
