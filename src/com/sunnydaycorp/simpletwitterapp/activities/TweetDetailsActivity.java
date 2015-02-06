@@ -21,7 +21,6 @@ public class TweetDetailsActivity extends Activity {
 	public static final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a \u00B7 dd MMM yy");
 
 	private ImageView ivUserProfilePic;
-	private ImageView ivTweetImage;
 	private TextView tvUserName;
 	private TextView tvUserScreenName;
 	private TextView tvTimestamp;
@@ -40,7 +39,6 @@ public class TweetDetailsActivity extends Activity {
 		tvUserScreenName = (TextView) findViewById(R.id.tvUserScreenName);
 		tvTimestamp = (TextView) findViewById(R.id.tvTimestamp);
 		tvTweetText = (TextView) findViewById(R.id.tvTweetText);
-		ivTweetImage = (ImageView) findViewById(R.id.ivTweetImage);
 
 		long tweetId = getIntent().getLongExtra(TweetListFragment.TWEET_ID_EXTRA_TAG, 0);
 		Tweet tweet = Tweet.byTweetId(tweetId);

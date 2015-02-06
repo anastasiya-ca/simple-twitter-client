@@ -38,6 +38,7 @@ public class UserProfileActivity extends FragmentActivity {
 	private TextView tvFollowersCount;
 
 	private long userId;
+	private TwitterUser user;
 	private boolean isOwnProfile;
 
 	private UserTimelineFragment userTimelineFragment;
@@ -95,16 +96,32 @@ public class UserProfileActivity extends FragmentActivity {
 		if (userId == loggedUserDetails.getUserId()) {
 			isOwnProfile = true;
 		}
+		user = TwitterUser.byRemoteId(userId);
+		if (user == null && userId == loggedUserDetails.getUserId()) {
+			user = new TwitterUser(loggedUserDetails.getUserId(), loggedUserDetails.getUserName(), loggedUserDetails.getUserScreenName(),
+					loggedUserDetails.getUserProfilePicUrl(), loggedUserDetails.getUserProfileBackgroundPicUrl(), loggedUserDetails.getTweetsCount(),
+					loggedUserDetails.getFollowersCount(), loggedUserDetails.getFollowingCount(), loggedUserDetails.getUserTagline());
+		}
+
 		setupViews();
 
 		FragmentTransaction sft = getSupportFragmentManager().beginTransaction();
 		userTimelineFragment = UserTimelineFragment.newInstance(userId, isOwnProfile);
-		sft.add(R.id.flUserTimelineContainer, userTimelineFragment);
+		sft.replace(R.id.flUserTimelineContainer, userTimelineFragment);
 		sft.commit();
 
 		viewPager = (ViewPager) findViewById(R.id.vpUserProfileContainer);
-		viewPagerAdapter = new UserProfileDetailsPagerAdapter(getSupportFragmentManager(), userId);
+		viewPagerAdapter = new UserProfileDetailsPagerAdapter(getSupportFragmentManager(), userId, hasUserTagline());
 		viewPager.setAdapter(viewPagerAdapter);
+	}
+
+	private boolean hasUserTagline() {
+		if (user != null) {
+			if (user.getUserTagline() != null && !user.getUserTagline().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void setupViews() {
@@ -115,15 +132,6 @@ public class UserProfileActivity extends FragmentActivity {
 	}
 
 	private void populateUserCounts() {
-		TwitterUser user = TwitterUser.byRemoteId(userId);
-		if (user == null && isOwnProfile) {
-			SharedLoggedUserDetails loggedUserDetails = ((SimpleTwitterApp) getApplicationContext()).getSharedLoggedUserDetails();
-			// if logged user is not in db then he/she does not have tweets anymore - any tweet count received on verify user details is out-dated
-			loggedUserDetails.setTweetsCount(0);
-			user = new TwitterUser(loggedUserDetails.getUserId(), loggedUserDetails.getUserName(), loggedUserDetails.getUserScreenName(),
-					loggedUserDetails.getUserProfilePicUrl(), loggedUserDetails.getUserProfileBackgroundPicUrl(), loggedUserDetails.getTweetsCount(),
-					loggedUserDetails.getFollowersCount(), loggedUserDetails.getFollowingCount(), loggedUserDetails.getUserTagline());
-		}
 		if (user != null) {
 			tvTweetCount.setText(TwitterCountsFormatter.getCountString(user.getTweetsCount()));
 			tvFollowingCount.setText(TwitterCountsFormatter.getCountString(user.getFollowingCount()));

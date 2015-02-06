@@ -54,9 +54,4 @@ public class HomeTimelineFragment extends TweetListFragment {
 		return Tweet.recentHomeTweets();
 	}
 
-	@Override
-	public void updateUserCountsTimelineRefreshed() {
-		// not used
-	}
-
 }

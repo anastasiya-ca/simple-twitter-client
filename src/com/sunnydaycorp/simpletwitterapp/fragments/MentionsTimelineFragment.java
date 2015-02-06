@@ -53,9 +53,4 @@ public class MentionsTimelineFragment extends TweetListFragment {
 		return Tweet.recentMentionsTweets();
 	}
 
-	@Override
-	public void updateUserCountsTimelineRefreshed() {
-		// not used
-	}
-
 }

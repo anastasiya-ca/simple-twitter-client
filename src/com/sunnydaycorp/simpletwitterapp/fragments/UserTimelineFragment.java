@@ -83,7 +83,8 @@ public class UserTimelineFragment extends TweetListFragment {
 	}
 
 	@Override
-	public void updateUserCountsTimelineRefreshed() {
+	public void onRefreshLoad() {
+		//initiate update of user counts 
 		Intent intent = new Intent("user-counts-updated");
 		LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 	}

@@ -87,7 +87,7 @@ public abstract class TweetListFragment extends Fragment {
 					break;
 				case REFRESH_LOAD:
 					addTweetsOnRefreshLoad(tweets);
-					updateUserCountsTimelineRefreshed();
+					onRefreshLoad();
 					break;
 				case MORE_OLD_LOAD:
 					addTweetsOnMoreOldLoad(tweets);
@@ -238,6 +238,7 @@ public abstract class TweetListFragment extends Fragment {
 
 	public abstract List<Tweet> getCachedRecentTweets();
 
-	public abstract void updateUserCountsTimelineRefreshed();
+	public void onRefreshLoad() {
+	};
 
 }

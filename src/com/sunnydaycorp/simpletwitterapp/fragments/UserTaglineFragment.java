@@ -24,7 +24,6 @@ public class UserTaglineFragment extends Fragment {
 	private TextView tvTagline;
 
 	private long userId;
-	private boolean hasTagline;
 
 	public UserTaglineFragment() {
 	}
@@ -63,7 +62,6 @@ public class UserTaglineFragment extends Fragment {
 		}
 		if (user != null) {
 			if (user.getUserTagline() != null && !user.getUserTagline().isEmpty()) {
-				hasTagline = true;
 				tvTagline.setText(user.getUserTagline());
 				if (!user.getUserProfileBackgroundPicUrl().isEmpty()) {
 					ImageLoader imageLoader = ImageLoader.getInstance();
@@ -74,10 +72,6 @@ public class UserTaglineFragment extends Fragment {
 			Log.d(LOG_TAG_CLASS, "User details are not found in DB");
 		}
 
-	}
-
-	public boolean hasTagline() {
-		return hasTagline;
 	}
 
 }
